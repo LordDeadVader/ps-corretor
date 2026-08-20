@@ -162,44 +162,41 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('comprar').scrollIntoView({ behavior: 'smooth' });
   });
 
-  /* ---- Galeria de bairros (painéis expansíveis) ---- */
+  /* ---- Galeria de bairros ----
+     Desktop (mouse): "sanfona" — passar o mouse expande o painel em foco.
+     Mobile/toque: carrossel simples — os cards navegam direto ao toque,
+     as setas só rolam para o próximo/anterior. Sem estado de expandir, que
+     conflita com o gesto nativo de arrastar em telas de toque. */
   const nPanelsEl = document.getElementById('neighborhoodPanels');
   if (nPanelsEl) {
     const panels = Array.from(nPanelsEl.querySelectorAll('.n-panel'));
     const gallery = document.getElementById('neighborhoodGallery');
     const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    function setActivePanel(index) {
-      panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
-      nPanelsEl.classList.add('has-active');
-      panels[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (isHoverCapable) {
+      function setActivePanel(index) {
+        panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
+        nPanelsEl.classList.add('has-active');
+      }
+      panels.forEach((panel, index) => panel.addEventListener('mouseenter', () => setActivePanel(index)));
+      nPanelsEl.addEventListener('mouseleave', () => nPanelsEl.classList.remove('has-active'));
     }
 
-    panels.forEach((panel, index) => {
-      if (isHoverCapable) {
-        panel.addEventListener('mouseenter', () => setActivePanel(index));
-      }
-      panel.addEventListener('click', (e) => {
-        const alreadyFocused = panel.classList.contains('is-active') && nPanelsEl.classList.contains('has-active');
-        if (!alreadyFocused) {
-          e.preventDefault();
-          setActivePanel(index);
-        }
+    function currentPanelIndex() {
+      const center = nPanelsEl.scrollLeft + nPanelsEl.clientWidth / 2;
+      let closest = 0, minDist = Infinity;
+      panels.forEach((p, i) => {
+        const dist = Math.abs((p.offsetLeft + p.offsetWidth / 2) - center);
+        if (dist < minDist) { minDist = dist; closest = i; }
       });
-    });
-
-    if (isHoverCapable) {
-      nPanelsEl.addEventListener('mouseleave', () => nPanelsEl.classList.remove('has-active'));
-    } else {
-      setActivePanel(0);
+      return closest;
     }
 
     gallery.querySelectorAll('.n-gallery__arrow').forEach(btn => {
       btn.addEventListener('click', () => {
-        const current = panels.findIndex(p => p.classList.contains('is-active'));
         const dir = parseInt(btn.dataset.dir, 10);
-        const next = (current + dir + panels.length) % panels.length;
-        setActivePanel(next);
+        const next = Math.min(Math.max(currentPanelIndex() + dir, 0), panels.length - 1);
+        panels[next].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       });
     });
   }
