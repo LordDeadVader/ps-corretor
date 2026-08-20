@@ -25,6 +25,13 @@
   --color-gold-400: #D9AF5F;
   --color-gold-100: #FBF2DF;
 
+  /* ---- Cor: acento (azul vibrante da logo) ---- */
+  --color-brand-blue-700: #06284D;
+  --color-brand-blue-600: #0B4A86;
+  --color-brand-blue-500: #0D6FD1;
+  --color-brand-blue-400: #29A0F6;
+  --color-brand-blue-100: #E6F3FE;
+
   /* ---- Cor: texto ---- */
   --color-text-primary: #101828;
   --color-text-secondary: #475467;

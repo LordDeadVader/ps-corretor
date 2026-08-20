@@ -16,9 +16,23 @@
   gap: var(--space-4);
 }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand__mark { width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover; }
-.brand__name { font-size: var(--fs-base); font-weight: var(--fw-semibold); color: var(--color-heading); line-height: 1.15; }
-.brand__name strong { display: block; font-weight: var(--fw-extrabold); }
+
+/* Selo escuro por trás da logo metálica: garante contraste em qualquer fundo */
+.brand__badge {
+  display: flex; align-items: center; justify-content: center;
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(160deg, #0E2748 0%, #071426 100%);
+  box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.28), 0 6px 16px rgba(4, 16, 31, 0.35);
+  transition: box-shadow var(--transition-base);
+}
+.brand:hover .brand__badge { box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.5), 0 8px 20px rgba(41, 160, 246, 0.25); }
+.brand__mark { height: 38px; width: auto; display: block; }
+
+.brand--footer .brand__badge, .brand--plain .brand__badge {
+  background: transparent; box-shadow: none; padding: 0;
+}
+.brand--footer .brand__mark { height: 48px; }
 
 .main-nav { display: none; align-items: center; gap: var(--space-8); }
 .main-nav a {
@@ -64,7 +78,7 @@
 .hero__content { position: relative; z-index: 1; padding: var(--space-16) var(--space-5) var(--space-12); color: var(--color-text-inverse); text-align: center; }
 .hero__eyebrow {
   font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--color-gold-400); margin-bottom: var(--space-4);
+  color: var(--color-brand-blue-400); margin-bottom: var(--space-4);
 }
 .hero__title { font-size: var(--fs-3xl); font-weight: var(--fw-extrabold); line-height: var(--lh-tight); letter-spacing: -0.02em; }
 .hero__subtitle { max-width: 560px; margin: var(--space-4) auto 0; font-size: var(--fs-md); font-weight: var(--fw-regular); color: rgba(255,255,255,0.85); }
@@ -162,7 +176,7 @@
 .trust-strip { background: var(--color-navy-900); padding: var(--space-12) 0; }
 .trust-strip__inner { display: grid; grid-template-columns: 1fr; gap: var(--space-8); }
 .trust-item { display: flex; gap: var(--space-4); align-items: flex-start; }
-.trust-item svg { width: 28px; height: 28px; color: var(--color-gold-400); flex-shrink: 0; }
+.trust-item svg { width: 28px; height: 28px; color: var(--color-brand-blue-400); flex-shrink: 0; }
 .trust-item h4 { color: var(--color-text-inverse); font-size: var(--fs-base); font-weight: var(--fw-semibold); }
 .trust-item p { margin-top: 4px; font-size: var(--fs-sm); color: rgba(255,255,255,0.65); line-height: var(--lh-relaxed); }
 
@@ -180,7 +194,7 @@
 .footer-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-10); padding-bottom: var(--space-12); }
 .brand--footer .brand__name { color: var(--color-text-inverse); }
 .footer-brand p { margin-top: var(--space-4); font-size: var(--fs-sm); color: rgba(255,255,255,0.6); line-height: var(--lh-relaxed); max-width: 320px; }
-.footer-creci { margin-top: var(--space-3) !important; font-weight: var(--fw-semibold); color: var(--color-gold-400) !important; }
+.footer-creci { margin-top: var(--space-3) !important; font-weight: var(--fw-semibold); color: var(--color-brand-blue-400) !important; }
 .footer-col h5 { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--color-text-inverse); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-4); }
 .footer-col ul { display: flex; flex-direction: column; gap: var(--space-3); }
 .footer-col a, .footer-col li { font-size: var(--fs-sm); color: rgba(255,255,255,0.65); }
