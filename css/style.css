@@ -3,6 +3,18 @@
    Mobile-first. Breakpoints: 560 / 768 / 1024 / 1280
    ========================================================================== */
 
+/* ---------------------------- BARRA DE CONTATO ---------------------------- */
+.topbar { background: var(--color-navy-900); }
+.topbar__inner {
+  height: 38px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  font-size: 12px; color: rgba(255,255,255,0.65); overflow-x: auto; white-space: nowrap;
+}
+.topbar__city { display: none; align-items: center; gap: 6px; }
+.topbar__city svg { width: 13px; height: 13px; color: var(--color-brand-blue-400); flex-shrink: 0; }
+.topbar__contacts { display: flex; align-items: center; gap: var(--space-4); margin-left: auto; }
+.topbar__contacts a { color: rgba(255,255,255,0.85); font-weight: var(--fw-medium); transition: color var(--transition-fast); }
+.topbar__contacts a:hover { color: var(--color-gold-400); }
+
 /* ---------------------------- HEADER ---------------------------- */
 .site-header {
   position: sticky; top: 0; z-index: 100;
@@ -15,25 +27,6 @@
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--space-4);
 }
-.brand { display: flex; align-items: center; gap: 10px; }
-
-/* Selo escuro por trás da logo metálica: garante contraste em qualquer fundo */
-.brand__badge {
-  display: flex; align-items: center; justify-content: center;
-  padding: 7px 12px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(160deg, #0E2748 0%, #071426 100%);
-  box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.28), 0 6px 16px rgba(4, 16, 31, 0.35);
-  transition: box-shadow var(--transition-base);
-}
-.brand:hover .brand__badge { box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.5), 0 8px 20px rgba(41, 160, 246, 0.25); }
-.brand__mark { height: 38px; width: auto; display: block; }
-
-.brand--footer .brand__badge, .brand--plain .brand__badge {
-  background: transparent; box-shadow: none; padding: 0;
-}
-.brand--footer .brand__mark { height: 48px; }
-
 .main-nav { display: none; align-items: center; gap: var(--space-8); }
 .main-nav a {
   font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--color-text-secondary);
@@ -87,9 +80,20 @@
 .search-bar {
   margin: var(--space-8) auto 0; max-width: 920px;
   background: var(--color-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);
-  padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);
-  text-align: left;
+  padding: var(--space-4); text-align: left;
 }
+
+/* Abas Comprar/Alugar (segmented control) */
+.search-tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--radius-full); background: var(--color-surface-alt); margin-bottom: var(--space-3); }
+.search-tabs input { position: absolute; opacity: 0; pointer-events: none; }
+.search-tabs label {
+  padding: 8px 20px; border-radius: var(--radius-full); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary); cursor: pointer; transition: var(--transition-fast);
+}
+.search-tabs input:checked + label { background: var(--color-navy-900); color: #fff; }
+.search-tabs input:focus-visible + label { outline: 2px solid var(--color-brand-blue-400); outline-offset: 2px; }
+
+.search-fields { display: flex; flex-direction: column; gap: var(--space-3); }
 .search-field { display: flex; flex-direction: column; gap: 4px; padding: 4px var(--space-2); flex: 1; }
 .search-field label { font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
 .search-field select, .search-field input {
@@ -139,6 +143,12 @@
 .property-card__slides img { width: 100%; height: 100%; object-fit: cover; flex: 0 0 100%; }
 
 .property-card__tag { position: absolute; top: 14px; left: 14px; z-index: 2; }
+.property-card__badges { position: absolute; top: 48px; left: 14px; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 60px); }
+.property-card__badge {
+  padding: 3px 9px; border-radius: var(--radius-full); font-size: 10px; font-weight: var(--fw-semibold);
+  background: rgba(11, 22, 38, 0.72); color: #fff; backdrop-filter: blur(2px); letter-spacing: 0.01em;
+}
+.property-card__code { font-size: 11px; color: var(--color-text-tertiary); font-weight: var(--fw-medium); }
 .property-card__fav {
   position: absolute; top: 12px; right: 12px; z-index: 2; width: 34px; height: 34px;
   border-radius: var(--radius-full); background: rgba(255,255,255,0.92); border: none;
@@ -171,6 +181,26 @@
 .property-card__meta { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
 .property-card__meta span { display: flex; align-items: center; gap: 5px; font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--color-text-secondary); }
 .property-card__meta svg { width: 16px; height: 16px; color: var(--color-gold-600); }
+.property-card__code { display: block; margin-top: var(--space-2); }
+
+/* ---------------------------- BAIRROS ---------------------------- */
+.section--tight { padding-top: 0; }
+.neighborhood-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+.neighborhood-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2);
+  padding: var(--space-4); border-radius: var(--radius-lg); background: var(--color-surface);
+  border: 1px solid var(--color-border); box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+.neighborhood-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--color-brand-blue-400); }
+.neighborhood-card__icon {
+  width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--color-brand-blue-100);
+  color: var(--color-brand-blue-600); display: flex; align-items: center; justify-content: center;
+}
+:root[data-theme="dark"] .neighborhood-card__icon { background: rgba(41, 160, 246, 0.14); color: var(--color-brand-blue-400); }
+.neighborhood-card__icon svg { width: 18px; height: 18px; }
+.neighborhood-card__name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--color-heading); }
+.neighborhood-card__count { font-size: var(--fs-xs); color: var(--color-text-tertiary); }
 
 /* ---------------------------- TRUST STRIP ---------------------------- */
 .trust-strip { background: var(--color-navy-900); padding: var(--space-12) 0; }
@@ -221,11 +251,14 @@
    ============================================================ */
 @media (min-width: 768px) {
   .hero__title { font-size: var(--fs-4xl); }
-  .search-bar { flex-direction: row; align-items: center; padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6); border-radius: var(--radius-full); }
+  .search-bar { padding: var(--space-5) var(--space-5) var(--space-4); }
+  .search-fields { flex-direction: row; align-items: center; }
   .search-field { padding: 0 var(--space-3); }
   .search-divider { display: block; width: 1px; height: 34px; background: var(--color-border); }
-  .search-submit { width: auto; border-radius: var(--radius-full); padding: 14px 26px; }
+  .search-submit { width: auto; border-radius: var(--radius-md); padding: 14px 26px; }
 
+  .topbar__city { display: flex; }
+  .neighborhood-grid { grid-template-columns: repeat(3, 1fr); }
   .property-grid { grid-template-columns: repeat(2, 1fr); }
   .trust-strip__inner { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
@@ -242,6 +275,7 @@
   .nav-toggle { display: none; }
 
   .section-heading { flex-direction: row; align-items: center; justify-content: space-between; }
+  .neighborhood-grid { grid-template-columns: repeat(6, 1fr); }
   .property-grid { grid-template-columns: repeat(3, 1fr); }
   .trust-strip__inner { grid-template-columns: repeat(4, 1fr); }
 }

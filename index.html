@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PS Corretor de Imóveis — Encontre o imóvel dos seus sonhos</title>
-<meta name="description" content="Imóveis premium para comprar ou alugar. Casas, apartamentos e terrenos selecionados com atendimento de confiança.">
+<title>Paulo Souza Corretor de Imóveis — Imobiliária em Ponta Grossa, PR</title>
+<meta name="description" content="Imobiliária em Ponta Grossa - PR. Casas, apartamentos e terrenos para comprar ou alugar, com atendimento próximo e personalizado em todos os bairros da cidade.">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,16 +15,32 @@
 </head>
 <body>
 
+<!-- ============ BARRA DE CONTATO ============ -->
+<div class="topbar">
+  <div class="container topbar__inner">
+    <span class="topbar__city">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+      Atendendo Ponta Grossa e região
+    </span>
+    <span class="topbar__contacts">
+      <a href="tel:+554230250000">(42) 3025-0000</a>
+      <a href="https://wa.me/5542999000000" target="_blank" rel="noopener">WhatsApp (42) 99900-0000</a>
+    </span>
+  </div>
+</div>
+
 <!-- ============ HEADER ============ -->
 <header class="site-header" id="siteHeader">
   <div class="container site-header__inner">
-    <a href="index.html" class="brand" aria-label="PS Corretor de Imóveis — página inicial">
-      <span class="brand__badge"><img src="assets/logo.png" alt="Paulo Souza Corretor de Imóveis" class="brand__mark"></span>
+    <a href="index.html" class="brand" aria-label="Paulo Souza Corretor de Imóveis — página inicial">
+      <span class="brand__badge"><img src="assets/logo-icon.png" alt="" class="brand__mark"></span>
+      <span class="brand__text"><strong>Paulo Souza</strong><span>Corretor de Imóveis</span></span>
     </a>
 
     <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
       <a href="#comprar">Comprar</a>
       <a href="#alugar">Alugar</a>
+      <a href="#bairros">Bairros</a>
       <a href="#sobre">Sobre</a>
       <a href="#contato">Contato</a>
     </nav>
@@ -50,43 +66,95 @@
   </div>
   <div class="hero__overlay"></div>
   <div class="container hero__content">
-    <p class="hero__eyebrow">CRECI 000000-F · Atendimento em toda a região</p>
-    <h1 class="hero__title">Encontre o imóvel<br>dos seus sonhos</h1>
+    <p class="hero__eyebrow">CRECI Nº F-18971 · Ponta Grossa, PR</p>
+    <h1 class="hero__title">Encontre o imóvel<br>dos seus sonhos em Ponta Grossa</h1>
     <p class="hero__subtitle">Curadoria de imóveis premium para comprar ou alugar, com um corretor dedicado do início ao fim.</p>
 
     <form class="search-bar" id="searchBar">
-      <div class="search-field">
-        <label for="tipo">Tipo</label>
-        <select id="tipo" name="tipo">
-          <option value="">Todos os tipos</option>
-          <option value="casa">Casa</option>
-          <option value="apartamento">Apartamento</option>
-          <option value="terreno">Terreno</option>
-        </select>
+      <div class="search-tabs" role="tablist" aria-label="O que você procura">
+        <input type="radio" id="acaoComprar" name="acao" value="comprar" checked><label for="acaoComprar">Comprar</label>
+        <input type="radio" id="acaoAlugar" name="acao" value="alugar"><label for="acaoAlugar">Alugar</label>
       </div>
-      <div class="search-divider" aria-hidden="true"></div>
-      <div class="search-field">
-        <label for="acao">Ação</label>
-        <select id="acao" name="acao">
-          <option value="comprar">Comprar</option>
-          <option value="alugar">Alugar</option>
-        </select>
+      <div class="search-fields">
+        <div class="search-field">
+          <label for="tipo">Tipo de imóvel</label>
+          <select id="tipo" name="tipo">
+            <option value="">Todos os tipos</option>
+            <option value="casa">Casa / Sobrado</option>
+            <option value="apartamento">Apartamento</option>
+            <option value="condominio">Condomínio</option>
+            <option value="comercial">Comercial</option>
+            <option value="terreno">Terreno</option>
+          </select>
+        </div>
+        <div class="search-divider" aria-hidden="true"></div>
+        <div class="search-field search-field--grow">
+          <label for="local">Bairro</label>
+          <select id="local" name="local">
+            <option value="">Todos os bairros de Ponta Grossa</option>
+            <option value="centro">Centro</option>
+            <option value="jardim-carvalho">Jardim Carvalho</option>
+            <option value="nova-russia">Nova Rússia</option>
+            <option value="oficinas">Oficinas</option>
+            <option value="uvaranas">Uvaranas</option>
+            <option value="boa-vista">Boa Vista</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary search-submit">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Buscar imóveis</span>
+        </button>
       </div>
-      <div class="search-divider" aria-hidden="true"></div>
-      <div class="search-field search-field--grow">
-        <label for="local">Localização</label>
-        <input type="text" id="local" name="local" placeholder="Cidade ou bairro">
-      </div>
-      <button type="submit" class="btn btn-primary search-submit">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <span>Buscar imóveis</span>
-      </button>
     </form>
 
     <div class="hero__stats">
       <div><strong>1.200+</strong><span>Imóveis negociados</span></div>
       <div><strong>18 anos</strong><span>De experiência no mercado</span></div>
       <div><strong>4,9/5</strong><span>Avaliação dos clientes</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BAIRROS ============ -->
+<section class="section section--tight neighborhoods" id="bairros">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Ponta Grossa, PR</p>
+        <h2>Explore por bairro</h2>
+      </div>
+    </div>
+    <div class="neighborhood-grid">
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Centro</span>
+        <span class="neighborhood-card__count">18 imóveis</span>
+      </a>
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Jardim Carvalho</span>
+        <span class="neighborhood-card__count">24 imóveis</span>
+      </a>
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Nova Rússia</span>
+        <span class="neighborhood-card__count">11 imóveis</span>
+      </a>
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Oficinas</span>
+        <span class="neighborhood-card__count">9 imóveis</span>
+      </a>
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Uvaranas</span>
+        <span class="neighborhood-card__count">15 imóveis</span>
+      </a>
+      <a href="#comprar" class="neighborhood-card">
+        <span class="neighborhood-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg></span>
+        <span class="neighborhood-card__name">Boa Vista</span>
+        <span class="neighborhood-card__count">7 imóveis</span>
+      </a>
     </div>
   </div>
 </section>
@@ -144,8 +212,8 @@
       <p>Fale agora com nossa equipe e receba recomendações personalizadas.</p>
     </div>
     <div class="cta-band__actions">
-      <a href="https://wa.me/5500000000000" class="btn btn-primary btn-lg" target="_blank" rel="noopener">Falar no WhatsApp</a>
-      <a href="mailto:contato@pscorretor.com.br" class="btn btn-outline btn-lg cta-outline">Enviar e-mail</a>
+      <a href="https://wa.me/5542999000000" class="btn btn-primary btn-lg" target="_blank" rel="noopener">Falar no WhatsApp</a>
+      <a href="mailto:contato@paulosouzaimoveis.com.br" class="btn btn-outline btn-lg cta-outline">Enviar e-mail</a>
     </div>
   </div>
 </section>
@@ -154,11 +222,12 @@
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
-      <a href="index.html" class="brand brand--footer" aria-label="PS Corretor de Imóveis — página inicial">
-        <span class="brand__badge"><img src="assets/logo.png" alt="Paulo Souza Corretor de Imóveis" class="brand__mark"></span>
+      <a href="index.html" class="brand brand--footer brand--on-dark" aria-label="Paulo Souza Corretor de Imóveis — página inicial">
+        <span class="brand__badge"><img src="assets/logo-icon.png" alt="" class="brand__mark"></span>
+        <span class="brand__text"><strong>Paulo Souza</strong><span>Corretor de Imóveis</span></span>
       </a>
-      <p>Imóveis selecionados com confiança e profissionalismo há 18 anos no mercado.</p>
-      <p class="footer-creci">CRECI 000000-F</p>
+      <p>Imobiliária em Ponta Grossa - PR, com atendimento próximo e profissional há 18 anos.</p>
+      <p class="footer-creci">CRECI Nº F-18971</p>
     </div>
 
     <div class="footer-col">
@@ -166,7 +235,7 @@
       <ul>
         <li><a href="#comprar">Comprar</a></li>
         <li><a href="#alugar">Alugar</a></li>
-        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#bairros">Bairros</a></li>
         <li><a href="#contato">Contato</a></li>
       </ul>
     </div>
@@ -174,8 +243,10 @@
     <div class="footer-col">
       <h5>Contato</h5>
       <ul>
-        <li><a href="https://wa.me/5500000000000" target="_blank" rel="noopener">WhatsApp (00) 00000-0000</a></li>
-        <li><a href="mailto:contato@pscorretor.com.br">contato@pscorretor.com.br</a></li>
+        <li><a href="https://wa.me/5542999000000" target="_blank" rel="noopener">WhatsApp (42) 99900-0000</a></li>
+        <li><a href="tel:+554230250000">(42) 3025-0000</a></li>
+        <li><a href="mailto:contato@paulosouzaimoveis.com.br">contato@paulosouzaimoveis.com.br</a></li>
+        <li>Rua XV de Novembro, Centro · Ponta Grossa - PR</li>
         <li>Seg a Sex · 9h às 18h</li>
       </ul>
     </div>
@@ -190,11 +261,11 @@
     </div>
   </div>
   <div class="container footer-bottom">
-    <p>&copy; <span id="year"></span> PS Corretor de Imóveis. Todos os direitos reservados.</p>
+    <p>&copy; <span id="year"></span> Paulo Souza Corretor de Imóveis. Todos os direitos reservados.</p>
   </div>
 </footer>
 
-<a href="https://wa.me/5500000000000" class="whatsapp-fab" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+<a href="https://wa.me/5542999000000" class="whatsapp-fab" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14.14c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.13 1.02-2.42.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.37 1.47.29.15.46.13.63-.05.17-.19.72-.84.92-1.13.19-.29.38-.24.63-.14.26.1 1.64.77 1.92.91.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
 </a>
 

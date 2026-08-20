@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     navToggle.setAttribute('aria-expanded', 'false');
   }));
 
-  /* ---- Dados mock de imóveis ---- */
+  /* ---- Dados mock de imóveis (Ponta Grossa, PR) ---- */
   const properties = [
     {
-      id: 1, tag: 'venda', price: 'R$ 1.250.000', title: 'Casa contemporânea com piscina',
-      location: 'Jardim das Acácias, São Paulo', beds: 4, baths: 3, garage: 2, area: 320,
+      id: 1, tag: 'venda', code: 'COD. PG-1042', price: 'R$ 1.250.000', title: 'Casa contemporânea com piscina',
+      location: 'Jardim Carvalho, Ponta Grossa', badges: ['Novidade', 'Alto Padrão'], beds: 4, baths: 3, garage: 2, area: 320,
       images: [
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=900&auto=format&fit=crop',
@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 2, tag: 'aluguel', price: 'R$ 5.800/mês', title: 'Apartamento moderno com vista',
-      location: 'Vila Nova Conceição, São Paulo', beds: 3, baths: 2, garage: 2, area: 145,
+      id: 2, tag: 'aluguel', code: 'COD. PG-0987', price: 'R$ 2.800/mês', title: 'Apartamento moderno com vista',
+      location: 'Centro, Ponta Grossa', badges: ['Semi Mobiliado'], beds: 3, baths: 2, garage: 2, area: 145,
       images: [
         'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=900&auto=format&fit=crop',
@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 3, tag: 'venda', price: 'R$ 890.000', title: 'Cobertura duplex reformada',
-      location: 'Moema, São Paulo', beds: 3, baths: 3, garage: 2, area: 210,
+      id: 3, tag: 'venda', code: 'COD. PG-1015', price: 'R$ 890.000', title: 'Cobertura duplex reformada',
+      location: 'Uvaranas, Ponta Grossa', badges: ['Novidade', 'Exclusivo'], beds: 3, baths: 3, garage: 2, area: 210,
       images: [
         'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?q=80&w=900&auto=format&fit=crop',
@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 4, tag: 'aluguel', price: 'R$ 3.200/mês', title: 'Studio elegante no centro',
-      location: 'Pinheiros, São Paulo', beds: 1, baths: 1, garage: 1, area: 58,
+      id: 4, tag: 'aluguel', code: 'COD. PG-0902', price: 'R$ 1.700/mês', title: 'Studio elegante no centro',
+      location: 'Centro, Ponta Grossa', badges: ['Mobiliado'], beds: 1, baths: 1, garage: 1, area: 58,
       images: [
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=900&auto=format&fit=crop',
@@ -53,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 5, tag: 'venda', price: 'R$ 2.100.000', title: 'Casa de condomínio com jardim',
-      location: 'Alphaville, Barueri', beds: 5, baths: 4, garage: 4, area: 480,
+      id: 5, tag: 'venda', code: 'COD. PG-1101', price: 'R$ 2.100.000', title: 'Casa de condomínio com jardim',
+      location: 'Colônia Dona Luíza, Ponta Grossa', badges: ['Alto Padrão', 'Exclusivo'], beds: 5, baths: 4, garage: 4, area: 480,
       images: [
         'https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=900&auto=format&fit=crop',
@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
     },
     {
-      id: 6, tag: 'venda', price: 'R$ 420.000', title: 'Terreno plano em condomínio fechado',
-      location: 'Cotia, São Paulo', beds: 0, baths: 0, garage: 0, area: 500,
+      id: 6, tag: 'venda', code: 'COD. PG-0865', price: 'R$ 420.000', title: 'Terreno plano em condomínio fechado',
+      location: 'Nova Rússia, Ponta Grossa', badges: ['Investimento'], beds: 0, baths: 0, garage: 0, area: 500,
       images: [
         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=900&auto=format&fit=crop'
@@ -91,11 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (p.garage) metaParts.push(`<span>${iconGarage} ${p.garage}</span>`);
     metaParts.push(`<span>${iconArea} ${p.area} m²</span>`);
 
+    const badges = (p.badges || []).map(b => `<span class="property-card__badge">${b}</span>`).join('');
+
     return `
     <article class="property-card" data-tag="${p.tag}">
       <div class="property-card__media" data-carousel data-index="0">
         <div class="property-card__slides">${slides}</div>
         <span class="badge ${badgeClass} property-card__tag">${tagLabel}</span>
+        ${badges ? `<div class="property-card__badges">${badges}</div>` : ''}
         <button class="property-card__fav" aria-label="Favoritar imóvel">${iconHeart}</button>
         ${p.images.length > 1 ? `
         <button class="carousel-arrow carousel-arrow--prev" data-dir="-1" aria-label="Foto anterior">${iconChevron('L')}</button>
@@ -107,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <h3 class="property-card__title">${p.title}</h3>
         <p class="property-card__location">${iconPin} ${p.location}</p>
         <div class="property-card__meta">${metaParts.join('')}</div>
+        <span class="property-card__code">${p.code}</span>
       </div>
     </article>`;
   }

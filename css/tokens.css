@@ -168,6 +168,35 @@
 :root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
 :root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
+/* ---- Marca (logo) ----
+   Usamos só o emblema (torres) em qualquer tamanho — o wordmark completo em
+   metal fica ilegível quando reduzido, então o nome é composto em texto HTML
+   real (sempre nítido, em qualquer tema ou zoom). */
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand__badge {
+  display: flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; flex-shrink: 0; padding: 7px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(160deg, #0E2748 0%, #071426 100%);
+  box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.32), 0 6px 16px rgba(4, 16, 31, 0.35);
+  transition: box-shadow var(--transition-base);
+}
+.brand:hover .brand__badge { box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.55), 0 8px 20px rgba(41, 160, 246, 0.28); }
+.brand__mark { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.brand__text { line-height: 1.2; }
+.brand__text strong { display: block; font-size: var(--fs-md); font-weight: var(--fw-extrabold); letter-spacing: -0.01em; color: var(--color-heading); }
+.brand__text span { display: block; margin-top: 2px; font-size: 10px; font-weight: var(--fw-semibold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-brand-blue-500); }
+
+/* Contextos sempre sobre fundo escuro (rodapé, sidebar do painel) */
+.brand--on-dark .brand__text strong { color: #FFFFFF; }
+.brand--on-dark .brand__text span { color: var(--color-brand-blue-400); }
+.brand--on-dark .brand__badge { background: rgba(255, 255, 255, 0.06); box-shadow: inset 0 0 0 1px rgba(41, 160, 246, 0.35); }
+
+@media (max-width: 420px) {
+  .brand__text span { display: none; }
+}
+
 /* ---- Reset básico ---- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
