@@ -31,6 +31,11 @@
   --color-text-tertiary: #8A94A6;
   --color-text-inverse: #FFFFFF;
 
+  /* ---- Cor: semântica (muda entre temas) ---- */
+  --color-heading: var(--color-navy-900);
+  --color-header-bg: rgba(255, 255, 255, 0.92);
+  --color-sticky-bg: rgba(255, 255, 255, 0.95);
+
   /* ---- Cor: estado ---- */
   --color-success: #1A8A5F;
   --color-success-bg: #E7F6EF;
@@ -104,6 +109,58 @@
   --sidebar-width-collapsed: 80px;
 }
 
+/* ==========================================================================
+   Tema escuro
+   Ativado via [data-theme="dark"] no <html> (definido por js/theme.js).
+   Cores de marca (navy/dourado usados como FUNDO em header, sidebar, rodapé,
+   faixa de confiança) permanecem as mesmas nos dois temas — só as cores de
+   superfície, borda e texto do conteúdo claro se invertem.
+   ========================================================================== */
+:root[data-theme="dark"] {
+  --color-bg: #0B1626;
+  --color-surface: #111F35;
+  --color-surface-alt: #17273F;
+  --color-border: #223350;
+  --color-border-strong: #2E4364;
+
+  --color-text-primary: #EDF1F9;
+  --color-text-secondary: #A9B4C9;
+  --color-text-tertiary: #7C89A3;
+
+  --color-heading: var(--color-text-primary);
+  --color-header-bg: rgba(11, 22, 38, 0.86);
+  --color-sticky-bg: rgba(15, 26, 43, 0.92);
+
+  --color-gold-100: #2C2210;
+  --color-success-bg: #113126;
+  --color-warning-bg: #2C2210;
+  --color-danger-bg: #341918;
+  --color-info-bg: #101F35;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 24px 52px rgba(0, 0, 0, 0.65);
+}
+
+/* ---- Botão de alternância de tema ---- */
+.theme-toggle {
+  position: relative;
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+.theme-toggle:hover { color: var(--color-gold-600); border-color: var(--color-gold-500); }
+.theme-toggle svg { width: 19px; height: 19px; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
 /* ---- Reset básico ---- */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -115,6 +172,7 @@ body {
   background: var(--color-bg);
   line-height: var(--lh-normal);
   -webkit-font-smoothing: antialiased;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
