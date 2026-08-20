@@ -161,4 +161,46 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     document.getElementById('comprar').scrollIntoView({ behavior: 'smooth' });
   });
+
+  /* ---- Galeria de bairros (painéis expansíveis) ---- */
+  const nPanelsEl = document.getElementById('neighborhoodPanels');
+  if (nPanelsEl) {
+    const panels = Array.from(nPanelsEl.querySelectorAll('.n-panel'));
+    const gallery = document.getElementById('neighborhoodGallery');
+    const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    function setActivePanel(index) {
+      panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
+      nPanelsEl.classList.add('has-active');
+      panels[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    panels.forEach((panel, index) => {
+      if (isHoverCapable) {
+        panel.addEventListener('mouseenter', () => setActivePanel(index));
+      }
+      panel.addEventListener('click', (e) => {
+        const alreadyFocused = panel.classList.contains('is-active') && nPanelsEl.classList.contains('has-active');
+        if (!alreadyFocused) {
+          e.preventDefault();
+          setActivePanel(index);
+        }
+      });
+    });
+
+    if (isHoverCapable) {
+      nPanelsEl.addEventListener('mouseleave', () => nPanelsEl.classList.remove('has-active'));
+    } else {
+      setActivePanel(0);
+    }
+
+    gallery.querySelectorAll('.n-gallery__arrow').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const current = panels.findIndex(p => p.classList.contains('is-active'));
+        const dir = parseInt(btn.dataset.dir, 10);
+        const next = (current + dir + panels.length) % panels.length;
+        setActivePanel(next);
+      });
+    });
+  }
 });
