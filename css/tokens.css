@@ -1,0 +1,198 @@
+/* ==========================================================================
+   PS Corretor de Imóveis — Design Tokens
+   Sistema de design compartilhado entre o site público e o painel admin.
+   ========================================================================== */
+
+:root {
+  /* ---- Cor: base ---- */
+  --color-bg: #F7F8FA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1F3F6;
+  --color-border: #E4E7EC;
+  --color-border-strong: #D3D8E0;
+
+  /* ---- Cor: marca ---- */
+  --color-navy-900: #0A1A33;
+  --color-navy-800: #0F2647;
+  --color-navy-700: #16335C;
+  --color-navy-600: #1E4278;
+  --color-navy-500: #2A5296;
+
+  /* ---- Cor: acento (dourado/cobre) ---- */
+  --color-gold-700: #9C6B1F;
+  --color-gold-600: #B8862B;
+  --color-gold-500: #C99A3E;
+  --color-gold-400: #D9AF5F;
+  --color-gold-100: #FBF2DF;
+
+  /* ---- Cor: texto ---- */
+  --color-text-primary: #101828;
+  --color-text-secondary: #475467;
+  --color-text-tertiary: #8A94A6;
+  --color-text-inverse: #FFFFFF;
+
+  /* ---- Cor: estado ---- */
+  --color-success: #1A8A5F;
+  --color-success-bg: #E7F6EF;
+  --color-warning: #B8862B;
+  --color-warning-bg: #FBF2DF;
+  --color-danger: #D0413B;
+  --color-danger-bg: #FBEAE9;
+  --color-info: #2A5296;
+  --color-info-bg: #EAF0FB;
+
+  /* ---- Tipografia ---- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 1.875rem;
+  --fs-3xl: 2.375rem;
+  --fs-4xl: 3rem;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.7;
+
+  /* ---- Espaçamento ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---- Raio de borda ---- */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* ---- Sombra ---- */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 28px rgba(16, 24, 40, 0.12);
+  --shadow-xl: 0 24px 48px rgba(16, 24, 40, 0.18);
+  --shadow-gold: 0 8px 20px rgba(184, 134, 43, 0.28);
+
+  /* ---- Transição ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease);
+  --transition-base: 220ms var(--ease);
+  --transition-slow: 360ms var(--ease);
+
+  /* ---- Layout ---- */
+  --container-max: 1240px;
+  --header-height: 76px;
+  --sidebar-width: 264px;
+  --sidebar-width-collapsed: 80px;
+}
+
+/* ---- Reset básico ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+/* ---- Utilitários de botão (compartilhados) ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 22px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border: 1px solid transparent;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-600));
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-gold);
+}
+.btn-primary:hover { box-shadow: 0 10px 26px rgba(184, 134, 43, 0.38); transform: translateY(-1px); }
+
+.btn-navy {
+  background: var(--color-navy-800);
+  color: var(--color-text-inverse);
+}
+.btn-navy:hover { background: var(--color-navy-700); }
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+.btn-outline:hover { border-color: var(--color-navy-700); background: var(--color-surface-alt); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.btn-ghost:hover { background: var(--color-surface-alt); color: var(--color-text-primary); }
+
+.btn-sm { padding: 8px 16px; font-size: var(--fs-xs); }
+.btn-lg { padding: 15px 30px; font-size: var(--fs-base); }
+.btn-block { width: 100%; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+}
+.badge-venda { background: var(--color-info-bg); color: var(--color-info); }
+.badge-aluguel { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge-success { background: var(--color-success-bg); color: var(--color-success); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Painel PS Corretor</title>
+<link rel="icon" href="../assets/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar__header">
+      <a href="dashboard.html" class="admin-sidebar__brand">
+        <img src="../assets/logo.jpeg" alt="PS Corretor">
+        <span>PS Corretor<strong>Painel do Corretor</strong></span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="admin-nav" aria-label="Navegação do painel">
+      <p class="admin-nav__label">Geral</p>
+      <a href="dashboard.html" class="is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="properties.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        Meus Imóveis
+      </a>
+      <a href="add-property.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar Novo Imóvel
+      </a>
+      <a href="leads.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Leads / Mensagens
+        <span class="badge-count">5</span>
+      </a>
+      <p class="admin-nav__label">Conta</p>
+      <a href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.37a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.63 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.63a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.37 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+        Configurações
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <div class="admin-user">
+        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Corretor">
+        <div>
+          <p class="admin-user__name">Paulo Silva</p>
+          <p class="admin-user__role">Corretor · CRECI 123456</p>
+        </div>
+        <a href="../index.html" class="admin-user__logout" aria-label="Sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="sidebar-open-btn" id="sidebarOpen" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="admin-topbar__title">
+        <h1>Dashboard</h1>
+        <p>Bem-vindo de volta, Paulo. Aqui está o resumo da sua carteira.</p>
+      </div>
+      <div class="admin-topbar__actions">
+        <button class="icon-btn" aria-label="Notificações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+        <a href="add-property.html" class="btn btn-primary btn-sm">+ Novo imóvel</a>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <section class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/></svg></div>
+            <span class="stat-card__trend">+3</span>
+          </div>
+          <p class="stat-card__value">27</p>
+          <p class="stat-card__label">Imóveis ativos</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <span class="stat-card__trend">+12%</span>
+          </div>
+          <p class="stat-card__value">48</p>
+          <p class="stat-card__label">Novos leads (mês)</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <span class="stat-card__trend">+8%</span>
+          </div>
+          <p class="stat-card__value">3.482</p>
+          <p class="stat-card__label">Visualizações (mês)</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__top">
+            <div class="stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div>
+            <span class="stat-card__trend">+2</span>
+          </div>
+          <p class="stat-card__value">6</p>
+          <p class="stat-card__label">Visitas agendadas</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Imóveis recentes</h2>
+          <a href="properties.html" class="btn btn-ghost btn-sm">Ver todos</a>
+        </div>
+        <div class="panel__body table-scroll" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Imóvel</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Visualizações</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="dt-property">
+                  <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=200&auto=format&fit=crop" alt="">
+                  <div><strong>Casa contemporânea com piscina</strong><span>Jardim das Acácias, São Paulo</span></div>
+                </td>
+                <td>Venda</td><td>R$ 1.250.000</td>
+                <td><span class="status-pill status-pill--ativo">Ativo</span></td>
+                <td>842</td>
+                <td><div class="row-actions">
+                  <button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                  <button aria-label="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+                </div></td>
+              </tr>
+              <tr>
+                <td class="dt-property">
+                  <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=200&auto=format&fit=crop" alt="">
+                  <div><strong>Apartamento moderno com vista</strong><span>Vila Nova Conceição, São Paulo</span></div>
+                </td>
+                <td>Aluguel</td><td>R$ 5.800/mês</td>
+                <td><span class="status-pill status-pill--pendente">Pendente</span></td>
+                <td>396</td>
+                <td><div class="row-actions">
+                  <button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                  <button aria-label="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+                </div></td>
+              </tr>
+              <tr>
+                <td class="dt-property">
+                  <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=200&auto=format&fit=crop" alt="">
+                  <div><strong>Cobertura duplex reformada</strong><span>Moema, São Paulo</span></div>
+                </td>
+                <td>Venda</td><td>R$ 890.000</td>
+                <td><span class="status-pill status-pill--rascunho">Rascunho</span></td>
+                <td>—</td>
+                <td><div class="row-actions">
+                  <button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                  <button aria-label="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+                </div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Últimas mensagens</h2>
+          <a href="leads.html" class="btn btn-ghost btn-sm">Ver todas</a>
+        </div>
+        <div class="panel__body table-scroll" style="padding:0;">
+          <table class="data-table">
+            <thead><tr><th>Cliente</th><th>Imóvel de interesse</th><th>Mensagem</th><th></th></tr></thead>
+            <tbody>
+              <tr><td class="dt-property"><div><strong>Mariana Costa</strong><span>há 2 horas</span></div></td><td>Casa com piscina</td><td>Gostaria de agendar uma visita neste fim de semana...</td><td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td></tr>
+              <tr><td class="dt-property"><div><strong>Rafael Souza</strong><span>há 5 horas</span></div></td><td>Studio no centro</td><td>O valor do condomínio já está incluso no aluguel?</td><td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>

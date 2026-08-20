@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adicionar Novo Imóvel — Painel PS Corretor</title>
+<link rel="icon" href="../assets/logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+<div class="admin-shell">
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar__header">
+      <a href="dashboard.html" class="admin-sidebar__brand">
+        <img src="../assets/logo.jpeg" alt="PS Corretor">
+        <span>PS Corretor<strong>Painel do Corretor</strong></span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Fechar menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="admin-nav" aria-label="Navegação do painel">
+      <p class="admin-nav__label">Geral</p>
+      <a href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="properties.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+        Meus Imóveis
+      </a>
+      <a href="add-property.html" class="is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+        Adicionar Novo Imóvel
+      </a>
+      <a href="leads.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Leads / Mensagens
+        <span class="badge-count">5</span>
+      </a>
+      <p class="admin-nav__label">Conta</p>
+      <a href="settings.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.37a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.63 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.63a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.37 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+        Configurações
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <div class="admin-user">
+        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Corretor">
+        <div>
+          <p class="admin-user__name">Paulo Silva</p>
+          <p class="admin-user__role">Corretor · CRECI 123456</p>
+        </div>
+        <a href="../index.html" class="admin-user__logout" aria-label="Sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button class="sidebar-open-btn" id="sidebarOpen" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="admin-topbar__title">
+        <h1>Adicionar Novo Imóvel</h1>
+        <p>Preencha as informações abaixo para publicar um novo anúncio</p>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <form id="propertyForm">
+
+        <!-- BLOCO 1: Informações Básicas -->
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">1</span>
+            <div><h3>Informações Básicas</h3><p>Título, tipo e descrição do imóvel</p></div>
+          </div>
+          <div class="form-block__body">
+            <div class="field-grid" style="margin-bottom: var(--space-4);">
+              <div class="field">
+                <label for="titulo">Título do anúncio <span class="required">*</span></label>
+                <input type="text" id="titulo" name="titulo" placeholder="Ex.: Casa contemporânea com piscina em condomínio fechado" required>
+              </div>
+            </div>
+            <div class="field-grid field-grid--2" style="margin-bottom: var(--space-4);">
+              <div class="field">
+                <label for="tipoImovel">Tipo de imóvel <span class="required">*</span></label>
+                <select id="tipoImovel" name="tipoImovel" required>
+                  <option value="">Selecione</option>
+                  <option value="casa">Casa</option>
+                  <option value="apartamento">Apartamento</option>
+                  <option value="cobertura">Cobertura</option>
+                  <option value="terreno">Terreno</option>
+                  <option value="sala-comercial">Sala comercial</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Categoria <span class="required">*</span></label>
+                <div class="toggle-group">
+                  <input type="radio" id="catVenda" name="categoria" value="venda" checked><label for="catVenda">Venda</label>
+                  <input type="radio" id="catAluguel" name="categoria" value="aluguel"><label for="catAluguel">Aluguel</label>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="descricao">Descrição</label>
+              <div class="rich-toolbar">
+                <button type="button" title="Negrito"><b>B</b></button>
+                <button type="button" title="Itálico"><i>I</i></button>
+                <button type="button" title="Lista">•≡</button>
+                <button type="button" title="Link">🔗</button>
+              </div>
+              <textarea id="descricao" name="descricao" placeholder="Descreva os diferenciais do imóvel, acabamentos, infraestrutura do bairro..."></textarea>
+              <p class="hint">Dica: descreva pontos fortes como reforma recente, vista, iluminação natural e proximidade de comércios.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 2: Precificação -->
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">2</span>
+            <div><h3>Precificação</h3><p>Valores de venda/aluguel e encargos</p></div>
+          </div>
+          <div class="form-block__body">
+            <div class="field-grid field-grid--3">
+              <div class="field">
+                <label for="valorImovel">Valor do imóvel <span class="required">*</span></label>
+                <div class="field-prefix"><span>R$</span><input type="text" inputmode="numeric" id="valorImovel" name="valorImovel" placeholder="0,00" required></div>
+              </div>
+              <div class="field">
+                <label for="valorCondominio">Valor do condomínio</label>
+                <div class="field-prefix"><span>R$</span><input type="text" inputmode="numeric" id="valorCondominio" name="valorCondominio" placeholder="0,00"></div>
+              </div>
+              <div class="field">
+                <label for="valorIptu">IPTU (anual)</label>
+                <div class="field-prefix"><span>R$</span><input type="text" inputmode="numeric" id="valorIptu" name="valorIptu" placeholder="0,00"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 3: Características -->
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">3</span>
+            <div><h3>Características</h3><p>Áreas e cômodos do imóvel</p></div>
+          </div>
+          <div class="form-block__body">
+            <div class="field-grid field-grid--6">
+              <div class="field">
+                <label for="areaTotal">Área total (m²)</label>
+                <input type="number" min="0" id="areaTotal" name="areaTotal" placeholder="0">
+              </div>
+              <div class="field">
+                <label for="areaUtil">Área útil (m²)</label>
+                <input type="number" min="0" id="areaUtil" name="areaUtil" placeholder="0">
+              </div>
+              <div class="field">
+                <label for="quartos">Quartos</label>
+                <input type="number" min="0" id="quartos" name="quartos" placeholder="0">
+              </div>
+              <div class="field">
+                <label for="suites">Suítes</label>
+                <input type="number" min="0" id="suites" name="suites" placeholder="0">
+              </div>
+              <div class="field">
+                <label for="banheiros">Banheiros</label>
+                <input type="number" min="0" id="banheiros" name="banheiros" placeholder="0">
+              </div>
+              <div class="field">
+                <label for="vagas">Vagas de garagem</label>
+                <input type="number" min="0" id="vagas" name="vagas" placeholder="0">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 4: Localização -->
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">4</span>
+            <div><h3>Localização</h3><p>Endereço completo do imóvel</p></div>
+          </div>
+          <div class="form-block__body">
+            <div class="location-layout">
+              <div>
+                <div class="field-grid field-grid--2" style="margin-bottom: var(--space-4);">
+                  <div class="field">
+                    <label for="cep">CEP</label>
+                    <input type="text" id="cep" name="cep" placeholder="00000-000">
+                  </div>
+                  <div class="field">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" id="bairro" name="bairro" placeholder="Ex.: Moema">
+                  </div>
+                </div>
+                <div class="field-grid field-grid--2" style="margin-bottom: var(--space-4);">
+                  <div class="field">
+                    <label for="rua">Rua</label>
+                    <input type="text" id="rua" name="rua" placeholder="Nome da rua">
+                  </div>
+                  <div class="field">
+                    <label for="numero">Número</label>
+                    <input type="text" id="numero" name="numero" placeholder="Ex.: 120">
+                  </div>
+                </div>
+                <div class="field-grid field-grid--2">
+                  <div class="field">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade" name="cidade" placeholder="Ex.: São Paulo">
+                  </div>
+                  <div class="field">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado">
+                      <option value="">Selecione</option>
+                      <option>SP</option><option>RJ</option><option>MG</option><option>PR</option><option>SC</option><option>RS</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="map-mock" aria-hidden="true">
+                <svg class="map-lines" viewBox="0 0 300 220" preserveAspectRatio="none">
+                  <rect width="300" height="220" fill="#EAEFF6"/>
+                  <path d="M0 60 H300 M0 120 H300 M0 170 H300" stroke="#D3D8E0" stroke-width="2"/>
+                  <path d="M60 0 V220 M150 0 V220 M230 0 V220" stroke="#D3D8E0" stroke-width="2"/>
+                  <path d="M0 95 H300" stroke="#C99A3E" stroke-width="3" opacity="0.5"/>
+                </svg>
+                <div class="map-pin">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="3" fill="#fff"/></svg>
+                  <div class="pulse"></div>
+                </div>
+                <div class="map-mock__label"><strong>Pin de localização</strong>O mapa é atualizado automaticamente ao preencher o CEP.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLOCO 5: Upload de Mídia -->
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">5</span>
+            <div><h3>Upload de Mídia</h3><p>Fotos e vídeos do imóvel</p></div>
+          </div>
+          <div class="form-block__body">
+            <label class="dropzone" id="dropzone" for="fileInput">
+              <div class="dropzone__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              </div>
+              <h4>Arraste e solte fotos ou vídeos aqui</h4>
+              <p>ou clique para selecionar arquivos · JPG, PNG ou MP4 até 25MB</p>
+              <input type="file" id="fileInput" multiple accept="image/*,video/*">
+            </label>
+
+            <div class="media-grid" id="mediaGrid"><!-- miniaturas injetadas via JS --></div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <div class="form-actions__left">
+            <button type="button" class="btn btn-outline">Salvar Rascunho</button>
+            <button type="button" class="btn btn-outline">Visualizar Anúncio</button>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">Publicar Imóvel</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
