@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar — Painel PS Corretor</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/admin.css">
+<script src="../js/theme.js"></script>
+</head>
+<body class="admin-body">
+
+<div class="auth-screen">
+  <div class="auth-card">
+    <a href="../index.html" class="brand brand--lg auth-card__brand" aria-label="Paulo Souza Corretor de Imóveis">
+      <img src="../assets/logo-icon.png" alt="Paulo Souza Corretor de Imóveis" class="brand__mark">
+    </a>
+    <h1>Área do Corretor</h1>
+    <p class="auth-card__subtitle">Entre com seu e-mail e senha para acessar o painel.</p>
+
+    <form id="loginForm" class="auth-form" novalidate>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" autocomplete="username" required placeholder="voce@email.com">
+      </div>
+      <div class="field">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+      </div>
+
+      <p class="auth-form__error" id="loginError" role="alert" hidden></p>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginSubmit">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script>
+  (async function redirectIfLogged() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) window.location.replace('dashboard.html');
+  })();
+
+  const form = document.getElementById('loginForm');
+  const errorEl = document.getElementById('loginError');
+  const submitBtn = document.getElementById('loginSubmit');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.hidden = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Entrando...';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      errorEl.textContent = 'E-mail ou senha inválidos. Verifique e tente novamente.';
+      errorEl.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Entrar';
+      return;
+    }
+
+    window.location.href = 'dashboard.html';
+  });
+</script>
+</body>
+</html>

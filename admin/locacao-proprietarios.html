@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leads / Mensagens — Painel PS Corretor</title>
+<title>Proprietários — Painel PS Corretor</title>
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,13 +39,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
         Adicionar Novo Imóvel
       </a>
-      <a href="leads.html" class="is-active">
+      <a href="leads.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Leads / Mensagens
         <span class="badge-count">5</span>
       </a>
       <p class="admin-nav__label">Locação</p>
-      <a href="locacao-proprietarios.html">
+      <a href="locacao-proprietarios.html" class="is-active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>
         Proprietários
       </a>
@@ -66,7 +66,7 @@
     <div class="admin-sidebar__footer">
       <div class="admin-user">
         <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Corretor">
-        <div><p class="admin-user__name">Paulo Silva</p><p class="admin-user__role">Corretor · CRECI 123456</p></div>
+        <div><p class="admin-user__name" data-user-name>Paulo Silva</p><p class="admin-user__role">Corretor · CRECI 123456</p></div>
         <a href="#" class="admin-user__logout" data-logout aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></a>
       </div>
     </div>
@@ -75,71 +75,65 @@
   <main class="admin-main">
     <header class="admin-topbar">
       <button class="sidebar-open-btn" id="sidebarOpen" aria-label="Abrir menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-      <div class="admin-topbar__title"><h1>Leads / Mensagens</h1><p>5 novas mensagens de clientes interessados</p></div>
+      <div class="admin-topbar__title"><h1>Proprietários</h1><p>Cadastro de proprietários de imóveis em locação</p></div>
       <div class="admin-topbar__actions">
         <button class="theme-toggle" data-theme-toggle aria-label="Alternar tema claro/escuro">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
         </button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnNovoProprietario">+ Novo proprietário</button>
       </div>
     </header>
 
     <div class="admin-content">
       <section class="panel">
-        <div class="panel__body table-scroll" style="padding:0;">
-          <table class="data-table">
-            <thead><tr><th>Cliente</th><th>Contato</th><th>Imóvel de interesse</th><th>Mensagem</th><th>Recebido</th><th></th></tr></thead>
-            <tbody>
-              <tr>
-                <td class="dt-property"><div><strong>Mariana Costa</strong></div></td>
-                <td>(11) 98888-1234</td>
-                <td>Casa com piscina</td>
-                <td>Gostaria de agendar uma visita neste fim de semana...</td>
-                <td>há 2 horas</td>
-                <td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td>
-              </tr>
-              <tr>
-                <td class="dt-property"><div><strong>Rafael Souza</strong></div></td>
-                <td>(11) 97777-5678</td>
-                <td>Studio no centro</td>
-                <td>O valor do condomínio já está incluso no aluguel?</td>
-                <td>há 5 horas</td>
-                <td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td>
-              </tr>
-              <tr>
-                <td class="dt-property"><div><strong>Bruna Lima</strong></div></td>
-                <td>(11) 96666-4321</td>
-                <td>Cobertura duplex reformada</td>
-                <td>Qual a documentação necessária para dar entrada no financiamento?</td>
-                <td>ontem</td>
-                <td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td>
-              </tr>
-              <tr>
-                <td class="dt-property"><div><strong>Eduardo Nunes</strong></div></td>
-                <td>(11) 95555-9012</td>
-                <td>Casa de condomínio com jardim</td>
-                <td>Tem interesse em receber meu carro como parte do pagamento?</td>
-                <td>há 2 dias</td>
-                <td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td>
-              </tr>
-              <tr>
-                <td class="dt-property"><div><strong>Larissa Prado</strong></div></td>
-                <td>(11) 94444-3456</td>
-                <td>Terreno plano em condomínio fechado</td>
-                <td>O terreno já possui infraestrutura de água e luz?</td>
-                <td>há 3 dias</td>
-                <td><div class="row-actions"><button aria-label="Responder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/></svg></button></div></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="panel__body table-scroll" style="padding:0;" id="tableWrap">
+          <p class="empty-state" id="loadingMsg">Carregando proprietários...</p>
         </div>
       </section>
     </div>
   </main>
 </div>
+
+<!-- Modal: novo/editar proprietário -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <form id="proprietarioForm">
+      <div class="modal__header">
+        <div><h3 id="modalTitle">Novo proprietário</h3><p>Dados de contato e recebimento</p></div>
+        <button type="button" class="modal__close" id="modalClose" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p class="form-msg form-msg--error" id="formError" hidden></p>
+        <input type="hidden" id="proprietarioId">
+        <div class="field-grid field-grid--2">
+          <div class="field"><label for="nome">Nome completo <span class="required">*</span></label><input type="text" id="nome" required></div>
+          <div class="field"><label for="cpfCnpj">CPF / CNPJ</label><input type="text" id="cpfCnpj"></div>
+          <div class="field"><label for="telefone">Telefone</label><input type="tel" id="telefone"></div>
+          <div class="field"><label for="email">E-mail</label><input type="text" id="email"></div>
+        </div>
+        <div class="field" style="margin-top: var(--space-4);"><label for="endereco">Endereço</label><input type="text" id="endereco"></div>
+        <p class="admin-nav__label" style="padding-left:0; margin-top: var(--space-5);">Dados bancários (para repasse)</p>
+        <div class="field-grid field-grid--2">
+          <div class="field"><label for="banco">Banco</label><input type="text" id="banco"></div>
+          <div class="field"><label for="agencia">Agência</label><input type="text" id="agencia"></div>
+          <div class="field"><label for="conta">Conta</label><input type="text" id="conta"></div>
+          <div class="field"><label for="chavePix">Chave PIX</label><input type="text" id="chavePix"></div>
+        </div>
+        <div class="field" style="margin-top: var(--space-4);"><label for="observacoes">Observações</label><textarea id="observacoes"></textarea></div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-outline" id="modalCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="modalSubmit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth-guard.js"></script>
 <script src="../js/admin.js"></script>
+<script src="../js/locacao-proprietarios.js"></script>
 </body>
 </html>

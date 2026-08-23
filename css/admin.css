@@ -141,6 +141,8 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 560px; }
 .field input[type="text"],
 .field input[type="number"],
 .field input[type="tel"],
+.field input[type="date"],
+.field input[type="email"],
 .field select,
 .field textarea {
   width: 100%; padding: 11px 14px; border-radius: var(--radius-md); border: 1px solid var(--color-border-strong);
@@ -214,6 +216,62 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 560px; }
 }
 .form-actions__left { display: flex; gap: var(--space-3); }
 .form-actions .btn { flex: 1; }
+
+/* ---------------------------- MODAL ---------------------------- */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 300; background: rgba(10,26,51,0.55);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity var(--transition-base);
+  padding: 0;
+}
+.modal-overlay.is-open { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
+  background: var(--color-surface); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-xl); transform: translateY(16px); transition: transform var(--transition-base);
+}
+.modal-overlay.is-open .modal { transform: translateY(0); }
+.modal__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; background: var(--color-surface); }
+.modal__header h3 { font-size: var(--fs-md); font-weight: var(--fw-bold); color: var(--color-heading); }
+.modal__header p { font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-top: 2px; }
+.modal__close { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--color-surface-alt); border: none; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); flex-shrink: 0; }
+.modal__close svg { width: 16px; height: 16px; }
+.modal__body { padding: var(--space-5); }
+.modal__footer { display: flex; gap: var(--space-3); padding: var(--space-5); border-top: 1px solid var(--color-border); position: sticky; bottom: 0; background: var(--color-surface); }
+.modal__footer .btn { flex: 1; }
+
+.empty-state { text-align: center; padding: var(--space-10) var(--space-5); color: var(--color-text-tertiary); }
+.empty-state svg { width: 40px; height: 40px; margin: 0 auto var(--space-3); opacity: 0.5; }
+.empty-state p { font-size: var(--fs-sm); }
+
+.form-msg { font-size: var(--fs-xs); font-weight: var(--fw-medium); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: var(--space-4); }
+.form-msg--error { color: var(--color-danger); background: var(--color-danger-bg); }
+.form-msg--success { color: var(--color-success); background: var(--color-success-bg); }
+
+@media (min-width: 640px) {
+  .modal-overlay { align-items: center; padding: var(--space-5); }
+  .modal { border-radius: var(--radius-xl); }
+}
+
+/* ---------------------------- AUTH (LOGIN) ---------------------------- */
+.auth-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: var(--space-5);
+  background: radial-gradient(circle at top, var(--color-navy-700), var(--color-navy-900));
+}
+.auth-card {
+  width: 100%; max-width: 400px; background: var(--color-surface); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl); padding: var(--space-8) var(--space-6); text-align: center;
+}
+.auth-card__brand { justify-content: center; margin-bottom: var(--space-5); }
+.auth-card h1 { font-size: var(--fs-xl); font-weight: var(--fw-extrabold); color: var(--color-heading); }
+.auth-card__subtitle { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--color-text-tertiary); margin-bottom: var(--space-6); }
+.auth-form { display: flex; flex-direction: column; gap: var(--space-4); text-align: left; }
+.auth-form__error {
+  font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--color-danger);
+  background: var(--color-danger-bg); border-radius: var(--radius-md); padding: 10px 14px; margin: 0;
+}
+.auth-form__hint { text-align: center; font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-top: var(--space-4); }
 
 /* ============================================================
    RESPONSIVE

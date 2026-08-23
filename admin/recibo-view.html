@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recibo de Aluguel — PS Corretor</title>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+  body { background: var(--color-surface-alt); padding: var(--space-6) var(--space-4); }
+  .recibo-toolbar { max-width: 720px; margin: 0 auto var(--space-4); display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+  .recibo-sheet {
+    max-width: 720px; margin: 0 auto; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
+    padding: var(--space-8); color: #101828;
+  }
+  .recibo-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); border-bottom: 2px solid var(--color-navy-900); padding-bottom: var(--space-5); }
+  .recibo-head img { height: 52px; }
+  .recibo-head h1 { font-size: var(--fs-lg); font-weight: var(--fw-extrabold); color: var(--color-navy-900); }
+  .recibo-head .num { text-align: right; font-size: var(--fs-sm); color: var(--color-text-tertiary); }
+  .recibo-valor { text-align: center; margin: var(--space-6) 0; }
+  .recibo-valor .label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
+  .recibo-valor .valor { font-size: var(--fs-3xl); font-weight: var(--fw-extrabold); color: var(--color-navy-900); margin-top: 4px; }
+  .recibo-texto { font-size: var(--fs-base); line-height: var(--lh-relaxed); color: var(--color-text-primary); margin: var(--space-6) 0; text-align: justify; }
+  .recibo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-6) 0; font-size: var(--fs-sm); }
+  .recibo-grid div span { display: block; font-size: var(--fs-xs); color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .recibo-obs { font-size: var(--fs-sm); color: var(--color-text-secondary); border-top: 1px dashed var(--color-border-strong); padding-top: var(--space-4); margin-top: var(--space-4); }
+  .recibo-sign { margin-top: var(--space-10); text-align: center; }
+  .recibo-sign .line { border-top: 1px solid var(--color-text-primary); width: 320px; margin: 0 auto; padding-top: 8px; font-size: var(--fs-sm); }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .recibo-toolbar { display: none; }
+    .recibo-sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="recibo-toolbar">
+  <a href="locacao-contratos.html" class="btn btn-outline btn-sm">&larr; Voltar</a>
+  <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Imprimir / Salvar PDF</button>
+</div>
+
+<div class="recibo-sheet" id="reciboSheet">
+  <p class="empty-state">Carregando recibo...</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth-guard.js"></script>
+<script>
+  function formatMoney(v) { return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  function formatDateExtenso(d) {
+    const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    const [y, m, day] = d.split('-').map(Number);
+    return `${day} de ${meses[m-1]} de ${y}`;
+  }
+  function escapeHtml(str) {
+    return (str == null ? '' : String(str)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  (async function loadRecibo() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const sheet = document.getElementById('reciboSheet');
+    if (!id) { sheet.innerHTML = '<p>Recibo não informado.</p>'; return; }
+
+    const { data: r, error } = await supabaseClient
+      .from('recibos')
+      .select('*, contratos_locacao(imovel_endereco, proprietarios(nome, cpf_cnpj), inquilinos(nome, cpf_cnpj))')
+      .eq('id', id)
+      .single();
+
+    if (error || !r) {
+      sheet.innerHTML = `<p>Não foi possível carregar o recibo. ${error ? escapeHtml(error.message) : ''}</p>`;
+      return;
+    }
+
+    const contrato = r.contratos_locacao;
+    const proprietario = contrato?.proprietarios;
+    const inquilino = contrato?.inquilinos;
+
+    sheet.innerHTML = `
+      <div class="recibo-head">
+        <img src="../assets/logo-icon.png" alt="PS Corretor">
+        <div><h1>Recibo de Aluguel</h1></div>
+        <div class="num">Referência<br><strong>${escapeHtml(r.referencia)}</strong></div>
+      </div>
+
+      <div class="recibo-valor">
+        <p class="label">Valor recebido</p>
+        <p class="valor">${formatMoney(r.valor)}</p>
+      </div>
+
+      <p class="recibo-texto">
+        Recebi de <strong>${escapeHtml(inquilino?.nome) || '________________________'}</strong>${inquilino?.cpf_cnpj ? ' (CPF/CNPJ ' + escapeHtml(inquilino.cpf_cnpj) + ')' : ''},
+        a quantia de <strong>${formatMoney(r.valor)}</strong>, referente ao aluguel do imóvel situado em
+        <strong>${escapeHtml(contrato?.imovel_endereco) || '________________________'}</strong>, relativo ao período de
+        <strong>${escapeHtml(r.referencia)}</strong>, dando plena quitação do valor pago em ${formatDateExtenso(r.data_pagamento)}.
+      </p>
+
+      <div class="recibo-grid">
+        <div><span>Proprietário(a)</span>${escapeHtml(proprietario?.nome) || '—'}${proprietario?.cpf_cnpj ? ' — CPF/CNPJ ' + escapeHtml(proprietario.cpf_cnpj) : ''}</div>
+        <div><span>Data do pagamento</span>${formatDateExtenso(r.data_pagamento)}</div>
+      </div>
+
+      ${r.observacoes ? `<p class="recibo-obs"><strong>Observações:</strong> ${escapeHtml(r.observacoes)}</p>` : ''}
+
+      <div class="recibo-sign">
+        <div class="line">${escapeHtml(proprietario?.nome) || 'Proprietário(a)'}</div>
+      </div>
+    `;
+  })();
+</script>
+</body>
+</html>
