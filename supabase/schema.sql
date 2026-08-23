@@ -46,6 +46,7 @@ create table if not exists contratos_locacao (
   corretor_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   proprietario_id uuid not null references proprietarios(id) on delete restrict,
   inquilino_id uuid not null references inquilinos(id) on delete restrict,
+  imovel_id uuid references imoveis(id) on delete set null,
   imovel_endereco text not null,
   valor_aluguel numeric(12,2) not null,
   dia_vencimento int not null default 5,

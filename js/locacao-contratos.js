@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const contratoSubmit = document.getElementById('contratoSubmit');
   const proprietarioSelect = document.getElementById('proprietarioSelect');
   const inquilinoSelect = document.getElementById('inquilinoSelect');
+  const imovelSelect = document.getElementById('imovelSelect');
+  let imoveisCadastrados = [];
 
   const modalRecibo = document.getElementById('modalRecibo');
   const reciboForm = document.getElementById('reciboForm');
@@ -40,15 +42,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---------------- Contratos ----------------
   async function populateSelects() {
-    const [{ data: proprietarios }, { data: inquilinos }] = await Promise.all([
+    const [{ data: proprietarios }, { data: inquilinos }, { data: imoveis }] = await Promise.all([
       supabaseClient.from('proprietarios').select('id, nome').order('nome'),
       supabaseClient.from('inquilinos').select('id, nome').order('nome'),
+      supabaseClient.from('imoveis').select('id, titulo, endereco, bairro, cidade, preco_valor, operacao').order('titulo'),
     ]);
     proprietarioSelect.innerHTML = '<option value="">Selecione...</option>' +
       (proprietarios || []).map(p => `<option value="${p.id}">${escapeHtml(p.nome)}</option>`).join('');
     inquilinoSelect.innerHTML = '<option value="">Selecione...</option>' +
       (inquilinos || []).map(p => `<option value="${p.id}">${escapeHtml(p.nome)}</option>`).join('');
+
+    imoveisCadastrados = imoveis || [];
+    imovelSelect.innerHTML = '<option value="">Nenhum — digitar endereço manualmente</option>' +
+      imoveisCadastrados.map(i => `<option value="${i.id}">${escapeHtml(i.titulo)} — ${escapeHtml(i.bairro)} (${i.operacao === 'venda' ? 'Venda' : 'Aluguel'})</option>`).join('');
   }
+
+  imovelSelect.addEventListener('change', () => {
+    const imovel = imoveisCadastrados.find(i => i.id === imovelSelect.value);
+    if (!imovel) return;
+    document.getElementById('imovelEndereco').value = imovel.endereco || `${imovel.titulo} — ${imovel.bairro}, ${imovel.cidade}`;
+    if (imovel.preco_valor != null) document.getElementById('valorAluguel').value = imovel.preco_valor;
+  });
 
   async function openContratoModal(record) {
     contratoForm.reset();
@@ -58,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     contratoModalTitle.textContent = record ? 'Editar contrato' : 'Novo contrato de locação';
     proprietarioSelect.value = record ? record.proprietario_id : '';
     inquilinoSelect.value = record ? record.inquilino_id : '';
+    imovelSelect.value = record ? (record.imovel_id || '') : '';
     document.getElementById('imovelEndereco').value = record ? record.imovel_endereco : '';
     document.getElementById('valorAluguel').value = record ? record.valor_aluguel : '';
     document.getElementById('diaVencimento').value = record ? record.dia_vencimento : 5;
@@ -146,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = {
       proprietario_id: proprietarioSelect.value,
       inquilino_id: inquilinoSelect.value,
+      imovel_id: imovelSelect.value || null,
       imovel_endereco: document.getElementById('imovelEndereco').value.trim(),
       valor_aluguel: parseFloat(document.getElementById('valorAluguel').value),
       dia_vencimento: parseInt(document.getElementById('diaVencimento').value, 10) || 5,

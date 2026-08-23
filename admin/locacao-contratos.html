@@ -42,7 +42,6 @@
       <a href="leads.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Leads / Mensagens
-        <span class="badge-count">5</span>
       </a>
       <p class="admin-nav__label">Locação</p>
       <a href="locacao-proprietarios.html">
@@ -123,6 +122,11 @@
             <label for="inquilinoSelect">Inquilino <span class="required">*</span></label>
             <select id="inquilinoSelect" required><option value="">Selecione...</option></select>
           </div>
+        </div>
+        <div class="field" style="margin-top: var(--space-4);">
+          <label for="imovelSelect">Imóvel cadastrado</label>
+          <select id="imovelSelect"><option value="">Nenhum — digitar endereço manualmente</option></select>
+          <p class="hint">Selecionar um imóvel já cadastrado preenche o endereço e o valor automaticamente.</p>
         </div>
         <div class="field" style="margin-top: var(--space-4);"><label for="imovelEndereco">Endereço do imóvel <span class="required">*</span></label><input type="text" id="imovelEndereco" required></div>
         <div class="field-grid field-grid--2" style="margin-top: var(--space-4);">
