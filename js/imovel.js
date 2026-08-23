@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const destaques = (p.destaques || []).map(d => `<li>${iconCheck}<span>${escapeHtml(d)}</span></li>`).join('');
     const whatsappMsg = encodeURIComponent(`Olá! Tenho interesse no imóvel "${p.titulo}" (${p.bairro}, ${p.cidade}). Pode me passar mais informações?`);
 
+    const { data: perfil } = await supabaseClient.from('corretor_perfil').select('*').eq('id', p.corretor_id).maybeSingle();
+    const corretorNome = perfil?.nome || 'Paulo Souza';
+    const corretorCreci = perfil?.creci ? `CRECI ${escapeHtml(perfil.creci)}` : 'Corretor de Imóveis';
+    const corretorFoto = perfil?.foto_url || 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop';
+
     page.innerHTML = `
       <nav class="imovel-breadcrumb">
         <a href="index.html">Início</a> / <a href="index.html#comprar">Imóveis</a> / <span>${escapeHtml(p.titulo)}</span>
@@ -101,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="imovel-price-card__note">Resposta rápida em horário comercial</p>
           </div>
           <div class="imovel-agent-card">
-            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Paulo Souza">
-            <div><strong>Paulo Souza</strong><span>Corretor de Imóveis · CRECI F-18971</span></div>
+            <img src="${escapeHtml(corretorFoto)}" alt="${escapeHtml(corretorNome)}">
+            <div><strong>${escapeHtml(corretorNome)}</strong><span>${corretorCreci}</span></div>
           </div>
         </aside>
       </div>

@@ -65,8 +65,8 @@
     </nav>
     <div class="admin-sidebar__footer">
       <div class="admin-user">
-        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Corretor">
-        <div><p class="admin-user__name">Paulo Silva</p><p class="admin-user__role">Corretor · CRECI 123456</p></div>
+        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Corretor" data-user-avatar>
+        <div><p class="admin-user__name" data-user-name>Paulo Souza</p><p class="admin-user__role" data-user-role>Corretor</p></div>
         <a href="#" class="admin-user__logout" data-logout aria-label="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg></a>
       </div>
     </div>
@@ -85,38 +85,46 @@
     </header>
 
     <div class="admin-content">
-      <section class="form-block">
-        <div class="form-block__header">
-          <span class="form-block__number">1</span>
-          <div><h3>Perfil do corretor</h3><p>Essas informações aparecem nos seus anúncios</p></div>
-        </div>
-        <div class="form-block__body">
-          <div class="field-grid field-grid--2">
-            <div class="field"><label for="nome">Nome completo</label><input type="text" id="nome" value="Paulo Silva"></div>
-            <div class="field"><label for="creci">CRECI</label><input type="text" id="creci" value="123456"></div>
-            <div class="field"><label for="email">E-mail</label><input type="text" id="email" value="paulo@pscorretor.com.br"></div>
-            <div class="field"><label for="whatsapp">WhatsApp</label><input type="tel" id="whatsapp" value="(11) 90000-0000"></div>
+      <p class="form-msg form-msg--error" id="formError" hidden></p>
+      <p class="form-msg form-msg--success" id="formSuccess" hidden></p>
+      <form id="profileForm">
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">1</span>
+            <div><h3>Foto de perfil</h3><p>Aparece no painel e nos anúncios do site</p></div>
           </div>
-        </div>
-      </section>
-
-      <section class="form-block">
-        <div class="form-block__header">
-          <span class="form-block__number">2</span>
-          <div><h3>Notificações</h3><p>Como você quer ser avisado sobre novos leads</p></div>
-        </div>
-        <div class="form-block__body">
-          <div class="field-grid field-grid--2">
-            <div class="field"><label for="notifEmail">Alertas por e-mail</label><select id="notifEmail"><option>Ativado</option><option>Desativado</option></select></div>
-            <div class="field"><label for="notifWhats">Alertas por WhatsApp</label><select id="notifWhats"><option>Ativado</option><option>Desativado</option></select></div>
+          <div class="form-block__body">
+            <div class="avatar-picker">
+              <img id="avatarPreview" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop" alt="Foto de perfil">
+              <div>
+                <label for="avatarInput" class="btn btn-outline btn-sm">Trocar foto</label>
+                <input type="file" id="avatarInput" accept="image/*" class="visually-hidden">
+                <p class="hint" id="avatarStatus">JPG ou PNG, formato quadrado funciona melhor.</p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div class="form-actions">
-        <div class="form-actions__left"></div>
-        <button type="button" class="btn btn-primary btn-lg">Salvar Alterações</button>
-      </div>
+        <section class="form-block">
+          <div class="form-block__header">
+            <span class="form-block__number">2</span>
+            <div><h3>Perfil do corretor</h3><p>Essas informações aparecem nos seus anúncios</p></div>
+          </div>
+          <div class="form-block__body">
+            <div class="field-grid field-grid--2">
+              <div class="field"><label for="nome">Nome completo <span class="required">*</span></label><input type="text" id="nome" required></div>
+              <div class="field"><label for="creci">CRECI</label><input type="text" id="creci" placeholder="Ex.: F-18971"></div>
+              <div class="field"><label for="emailLogin">E-mail de login</label><input type="text" id="emailLogin" disabled></div>
+              <div class="field"><label for="telefone">WhatsApp / Telefone</label><input type="tel" id="telefone" placeholder="(42) 99900-0000"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <div class="form-actions__left"></div>
+          <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Salvar Alterações</button>
+        </div>
+      </form>
     </div>
   </main>
 </div>
@@ -124,5 +132,6 @@
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth-guard.js"></script>
 <script src="../js/admin.js"></script>
+<script src="../js/settings.js"></script>
 </body>
 </html>

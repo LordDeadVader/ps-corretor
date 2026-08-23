@@ -253,6 +253,11 @@ table.data-table { width: 100%; border-collapse: collapse; min-width: 560px; }
   .modal { border-radius: var(--radius-xl); }
 }
 
+/* ---------------------------- AVATAR PICKER (Configurações) ---------------------------- */
+.avatar-picker { display: flex; align-items: center; gap: var(--space-5); }
+.avatar-picker img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 1px solid var(--color-border); flex-shrink: 0; }
+.avatar-picker .hint { margin-top: var(--space-2); }
+
 /* ---------------------------- AUTH (LOGIN) ---------------------------- */
 .auth-screen {
   min-height: 100vh; display: flex; align-items: center; justify-content: center;

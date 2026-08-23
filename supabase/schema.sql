@@ -176,3 +176,48 @@ grant usage on schema public to anon, authenticated;
 grant select, insert, update, delete on proprietarios, inquilinos, contratos_locacao, recibos to authenticated;
 grant select, insert, update, delete on imoveis to authenticated;
 grant select on imoveis to anon;
+
+-- ---------------------------------------------------------------------
+-- Perfil público do corretor (nome, CRECI, telefone, foto)
+-- ---------------------------------------------------------------------
+create table if not exists corretor_perfil (
+  id uuid primary key default auth.uid() references auth.users(id) on delete cascade,
+  nome text not null default 'Paulo Souza',
+  creci text,
+  telefone text,
+  foto_url text,
+  updated_at timestamptz not null default now()
+);
+
+alter table corretor_perfil enable row level security;
+
+drop policy if exists "qualquer pessoa ve o perfil do corretor" on corretor_perfil;
+create policy "qualquer pessoa ve o perfil do corretor" on corretor_perfil
+  for select using (true);
+
+drop policy if exists "corretor edita o proprio perfil" on corretor_perfil;
+create policy "corretor edita o proprio perfil" on corretor_perfil
+  for insert with check (auth.uid() = id);
+
+drop policy if exists "corretor atualiza o proprio perfil" on corretor_perfil;
+create policy "corretor atualiza o proprio perfil" on corretor_perfil
+  for update using (auth.uid() = id) with check (auth.uid() = id);
+
+grant select, insert, update on corretor_perfil to authenticated;
+grant select on corretor_perfil to anon;
+
+insert into storage.buckets (id, name, public)
+values ('avatares', 'avatares', true)
+on conflict (id) do nothing;
+
+drop policy if exists "leitura publica avatares" on storage.objects;
+create policy "leitura publica avatares" on storage.objects
+  for select using (bucket_id = 'avatares');
+
+drop policy if exists "corretor autenticado envia avatar" on storage.objects;
+create policy "corretor autenticado envia avatar" on storage.objects
+  for insert with check (bucket_id = 'avatares' and auth.role() = 'authenticated');
+
+drop policy if exists "corretor autenticado atualiza avatar" on storage.objects;
+create policy "corretor autenticado atualiza avatar" on storage.objects
+  for update using (bucket_id = 'avatares' and auth.role() = 'authenticated');
