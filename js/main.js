@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     allProperties = data || [];
+    startHeroSlideshow(allProperties);
 
     if (!allProperties.length) {
       grid.innerHTML = `<p class="property-empty">Nenhum imóvel publicado no momento. Volte em breve!</p>`;
@@ -155,6 +156,32 @@ document.addEventListener('DOMContentLoaded', () => {
     populateFilterOptions();
     wireCarousels();
     applyFilters();
+  }
+
+  /* ---- Slideshow do hero: fotos de capa dos imóveis, mais recentes primeiro ---- */
+  function startHeroSlideshow(properties) {
+    const heroBg = document.getElementById('heroBg');
+    if (!heroBg) return;
+
+    const images = properties
+      .flatMap(p => (p.fotos_destaque && p.fotos_destaque.length) ? p.fotos_destaque : [p.capa || (p.fotos && p.fotos[0])])
+      .filter(Boolean);
+    if (!images.length) return;
+
+    const [imgA, imgB] = heroBg.querySelectorAll('.hero__bg-img');
+    imgA.src = images[0];
+    let index = 0;
+
+    if (images.length < 2) return;
+
+    setInterval(() => {
+      index = (index + 1) % images.length;
+      const active = heroBg.querySelector('.hero__bg-img.is-active');
+      const next = active === imgA ? imgB : imgA;
+      next.src = images[index];
+      active.classList.remove('is-active');
+      next.classList.add('is-active');
+    }, 6000);
   }
 
   /* ---- Filtro Venda/Aluguel ---- */
@@ -187,12 +214,15 @@ document.addEventListener('DOMContentLoaded', () => {
   loadProperties();
 
   /* ---- Galeria de bairros ----
+     As fotos vêm do Supabase (editáveis pelo corretor em admin/bairros.html);
+     o HTML estático do index.html fica como fallback caso a busca falhe.
      Desktop (mouse): "sanfona" — passar o mouse expande o painel em foco.
      Mobile/toque: carrossel simples — os cards navegam direto ao toque,
      as setas só rolam para o próximo/anterior. Sem estado de expandir, que
      conflita com o gesto nativo de arrastar em telas de toque. */
-  const nPanelsEl = document.getElementById('neighborhoodPanels');
-  if (nPanelsEl) {
+  function initNeighborhoodGallery() {
+    const nPanelsEl = document.getElementById('neighborhoodPanels');
+    if (!nPanelsEl) return;
     const panels = Array.from(nPanelsEl.querySelectorAll('.n-panel'));
     const gallery = document.getElementById('neighborhoodGallery');
     const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -236,4 +266,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  async function loadNeighborhoodPanels() {
+    const nPanelsEl = document.getElementById('neighborhoodPanels');
+    if (nPanelsEl) {
+      const { data } = await supabaseClient.from('bairros_destaque').select('*').order('ordem', { ascending: true });
+      if (data && data.length) {
+        nPanelsEl.innerHTML = data.map((b, i) => `
+          <a href="#comprar" class="n-panel ${i === 0 ? 'is-active' : ''}" data-index="${i}" data-bairro="${escapeHtml(b.nome)}">
+            <img class="n-panel__img" src="${escapeHtml(b.foto_url || '')}" alt="${escapeHtml(b.nome)}, Ponta Grossa" loading="lazy">
+            <span class="n-panel__tint"></span>
+            <span class="n-panel__label"><span>${escapeHtml(b.nome)}</span></span>
+          </a>`).join('');
+      }
+    }
+    initNeighborhoodGallery();
+  }
+
+  loadNeighborhoodPanels();
 });

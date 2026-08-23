@@ -61,26 +61,30 @@
 .main-nav.is-open a { width: 100%; padding: 10px 0; }
 
 /* ---------------------------- HERO ---------------------------- */
-.hero { position: relative; min-height: 640px; display: flex; align-items: center; overflow: hidden; }
-.hero__bg { position: absolute; inset: 0; }
-.hero__bg img { width: 100%; height: 100%; object-fit: cover; }
+.hero { position: relative; min-height: 92vh; display: flex; align-items: center; overflow: hidden; }
+.hero__bg { position: absolute; inset: 0; background: var(--color-navy-900); }
+.hero__bg-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 1.4s ease;
+}
+.hero__bg-img.is-active { opacity: 1; }
 .hero__overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(10,26,51,0.75) 0%, rgba(10,26,51,0.55) 45%, rgba(10,26,51,0.9) 100%);
+  background: linear-gradient(180deg, rgba(10,26,51,0.8) 0%, rgba(10,26,51,0.62) 45%, rgba(10,26,51,0.92) 100%);
 }
-.hero__content { position: relative; z-index: 1; padding: var(--space-16) var(--space-5) var(--space-12); color: var(--color-text-inverse); text-align: center; }
+.hero__content { position: relative; z-index: 1; padding: var(--space-12) var(--space-5) var(--space-10); color: var(--color-text-inverse); text-align: center; }
 .hero__eyebrow {
   font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--color-brand-blue-400); margin-bottom: var(--space-4);
+  color: var(--color-brand-blue-400); margin-bottom: var(--space-3);
 }
-.hero__title { font-size: var(--fs-3xl); font-weight: var(--fw-extrabold); line-height: var(--lh-tight); letter-spacing: -0.02em; }
-.hero__subtitle { max-width: 560px; margin: var(--space-4) auto 0; font-size: var(--fs-md); font-weight: var(--fw-regular); color: rgba(255,255,255,0.85); }
+.hero__title { font-size: var(--fs-2xl); font-weight: var(--fw-extrabold); line-height: var(--lh-tight); letter-spacing: -0.02em; }
+.hero__subtitle { max-width: 520px; margin: var(--space-3) auto 0; font-size: var(--fs-sm); font-weight: var(--fw-regular); color: rgba(255,255,255,0.85); }
 
 /* ---- search bar ---- */
 .search-bar {
-  margin: var(--space-8) auto 0; max-width: 920px;
+  margin: var(--space-6) auto 0; max-width: 760px;
   background: var(--color-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);
-  padding: var(--space-4); text-align: left;
+  padding: var(--space-3); text-align: left;
 }
 
 /* Abas Comprar/Alugar (segmented control) */
@@ -326,8 +330,8 @@
    RESPONSIVE — Tablet (>=768px)
    ============================================================ */
 @media (min-width: 768px) {
-  .hero__title { font-size: var(--fs-4xl); }
-  .search-bar { padding: var(--space-5) var(--space-5) var(--space-4); }
+  .hero__title { font-size: var(--fs-3xl); }
+  .search-bar { padding: var(--space-4) var(--space-4) var(--space-3); }
   .search-fields { flex-direction: row; align-items: center; }
   .search-field { padding: 0 var(--space-3); }
   .search-divider { display: block; width: 1px; height: 34px; background: var(--color-border); }

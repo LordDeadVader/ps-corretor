@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${data.map(p => `
             <tr>
               <td class="dt-property">
-                <img src="${escapeHtml(p.capa || (p.fotos && p.fotos[0]) || '')}" alt="">
+                <img src="${escapeHtml(adminImgSrc(p.capa || (p.fotos && p.fotos[0])))}" alt="">
                 <div><strong>${escapeHtml(p.titulo)}</strong><span>${escapeHtml(p.bairro)}, ${escapeHtml(p.cidade)}</span></div>
               </td>
               <td>${operacaoLabel[p.operacao]}</td>

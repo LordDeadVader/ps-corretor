@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusClass = { ativo: 'status-pill--ativo', pendente: 'status-pill--pendente', rascunho: 'status-pill--rascunho' };
 
   function cardTemplate(p) {
-    const capa = p.capa || (p.fotos && p.fotos[0]) || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=500&auto=format&fit=crop';
+    const capa = adminImgSrc(p.capa || (p.fotos && p.fotos[0])) || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=500&auto=format&fit=crop';
     return `
     <article class="admin-property-card" data-status="${p.status}" data-search="${escapeHtml((p.titulo + ' ' + p.bairro + ' ' + p.cidade).toLowerCase())}">
       <div class="admin-property-card__img">

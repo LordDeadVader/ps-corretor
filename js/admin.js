@@ -1,4 +1,13 @@
 // PS Corretor de Imóveis — Painel Administrativo
+
+// Caminhos salvos no banco são relativos à raiz do site (ex.: "assets/imoveis/x.jpg"),
+// mas as páginas do painel vivem em /admin/ — prefixa "../" para resolver certo.
+// URLs completas (Supabase Storage) passam direto.
+window.adminImgSrc = function (path) {
+  if (!path) return '';
+  return /^https?:\/\//.test(path) ? path : '../' + path;
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ---- Sidebar (mobile) ---- */

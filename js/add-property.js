@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const params = new URLSearchParams(location.search);
   const editId = params.get('id');
-  let items = []; // { url, isCover }
+  let items = []; // { url, isCover, isDestaque }
+  const MAX_DESTAQUES = 3;
 
   function slugify(str) {
     return str.toString().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -22,17 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderMedia() {
+    const destaqueCount = items.filter(i => i.isDestaque).length;
     mediaGrid.innerHTML = items.map((item, i) => `
-      <div class="media-item ${item.isCover ? 'is-cover' : ''}" data-index="${i}">
+      <div class="media-item ${item.isCover ? 'is-cover' : ''} ${item.isDestaque ? 'is-destaque' : ''}" data-index="${i}">
         <span class="media-item__cover-badge">Capa</span>
-        <img src="${item.url}" alt="Foto do imóvel">
+        <span class="media-item__destaque-badge">Destaque</span>
+        <img src="${adminImgSrc(item.url)}" alt="Foto do imóvel">
         <div class="media-item__overlay">
-          <button type="button" class="media-item__set-cover" data-action="cover" data-index="${i}">Definir como capa</button>
-          <button type="button" data-action="remove" data-index="${i}" aria-label="Remover">
+          <div class="media-item__row">
+            <button type="button" class="media-item__set-cover" data-action="cover" data-index="${i}">Capa</button>
+            <button type="button" class="media-item__set-destaque" data-action="destaque" data-index="${i}">${item.isDestaque ? '★ Destaque' : '☆ Destaque'}</button>
+          </div>
+          <button type="button" data-action="remove" data-index="${i}" aria-label="Remover" style="align-self:flex-end;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
       </div>`).join('');
+    document.getElementById('destaqueCount').textContent = `${destaqueCount}/${MAX_DESTAQUES} fotos em destaque selecionadas (usadas na página inicial)`;
   }
 
   async function uploadFiles(fileList) {
@@ -45,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
       const { data: pub } = supabaseClient.storage.from('imoveis-fotos').getPublicUrl(path);
-      items.push({ url: pub.publicUrl, isCover: items.length === 0 });
+      items.push({ url: pub.publicUrl, isCover: items.length === 0, isDestaque: false });
     }
     uploadStatus.textContent = '';
     renderMedia();
@@ -66,6 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (items.length && !items.some(i => i.isCover)) items[0].isCover = true;
     } else if (btn.dataset.action === 'cover') {
       items.forEach((item, i) => { item.isCover = i === index; });
+    } else if (btn.dataset.action === 'destaque') {
+      const item = items[index];
+      const activeCount = items.filter(i => i.isDestaque).length;
+      if (!item.isDestaque && activeCount >= MAX_DESTAQUES) {
+        alert(`Você já selecionou ${MAX_DESTAQUES} fotos em destaque. Desmarque uma antes de escolher outra.`);
+        return;
+      }
+      item.isDestaque = !item.isDestaque;
     }
     renderMedia();
   });
@@ -108,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('destaques').value = (p.destaques || []).join('\n');
     document.getElementById('badges').value = (p.badges || []).join(', ');
 
-    items = (p.fotos || []).map(url => ({ url, isCover: url === p.capa }));
+    const destaques = p.fotos_destaque || [];
+    items = (p.fotos || []).map(url => ({ url, isCover: url === p.capa, isDestaque: destaques.includes(url) }));
     if (items.length && !items.some(i => i.isCover)) items[0].isCover = true;
     renderMedia();
   }
@@ -148,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
       destaques,
       badges,
       fotos,
+      fotos_destaque: items.filter(i => i.isDestaque).map(i => i.url),
       capa: capaItem ? capaItem.url : null,
     };
 

@@ -122,6 +122,7 @@ create table if not exists imoveis (
   status text not null default 'ativo' check (status in ('ativo', 'pendente', 'rascunho')),
   capa text,
   fotos jsonb not null default '[]'::jsonb,
+  fotos_destaque jsonb not null default '[]'::jsonb,
   visualizacoes int not null default 0,
   created_at timestamptz not null default now()
 );
@@ -222,3 +223,45 @@ create policy "corretor autenticado envia avatar" on storage.objects
 drop policy if exists "corretor autenticado atualiza avatar" on storage.objects;
 create policy "corretor autenticado atualiza avatar" on storage.objects
   for update using (bucket_id = 'avatares' and auth.role() = 'authenticated');
+
+-- ---------------------------------------------------------------------
+-- Fotos dos bairros (galeria "efeito sanfona" da página inicial)
+-- ---------------------------------------------------------------------
+create table if not exists bairros_destaque (
+  id uuid primary key default gen_random_uuid(),
+  corretor_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  nome text not null,
+  slug text not null unique,
+  foto_url text,
+  ordem int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table bairros_destaque enable row level security;
+
+drop policy if exists "qualquer pessoa ve bairros" on bairros_destaque;
+create policy "qualquer pessoa ve bairros" on bairros_destaque
+  for select using (true);
+
+drop policy if exists "corretor gerencia bairros" on bairros_destaque;
+create policy "corretor gerencia bairros" on bairros_destaque
+  for all using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
+
+grant select, insert, update, delete on bairros_destaque to authenticated;
+grant select on bairros_destaque to anon;
+
+insert into storage.buckets (id, name, public)
+values ('bairros', 'bairros', true)
+on conflict (id) do nothing;
+
+drop policy if exists "leitura publica fotos bairros" on storage.objects;
+create policy "leitura publica fotos bairros" on storage.objects
+  for select using (bucket_id = 'bairros');
+
+drop policy if exists "corretor autenticado envia foto bairro" on storage.objects;
+create policy "corretor autenticado envia foto bairro" on storage.objects
+  for insert with check (bucket_id = 'bairros' and auth.role() = 'authenticated');
+
+drop policy if exists "corretor autenticado atualiza foto bairro" on storage.objects;
+create policy "corretor autenticado atualiza foto bairro" on storage.objects
+  for update using (bucket_id = 'bairros' and auth.role() = 'authenticated');

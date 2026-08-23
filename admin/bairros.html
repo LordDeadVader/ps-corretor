@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meus Imóveis — Painel PS Corretor</title>
+<title>Bairros do site — Painel PS Corretor</title>
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
         Dashboard
       </a>
-      <a href="properties.html" class="is-active">
+      <a href="properties.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
         Meus Imóveis
       </a>
@@ -57,7 +57,7 @@
         Contratos &amp; Recibos
       </a>
       <p class="admin-nav__label">Site</p>
-      <a href="bairros.html">
+      <a href="bairros.html" class="is-active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>
         Bairros
       </a>
@@ -79,40 +79,61 @@
   <main class="admin-main">
     <header class="admin-topbar">
       <button class="sidebar-open-btn" id="sidebarOpen" aria-label="Abrir menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-      <div class="admin-topbar__title"><h1>Meus Imóveis</h1><p>27 imóveis cadastrados na sua carteira</p></div>
+      <div class="admin-topbar__title"><h1>Bairros do site</h1><p>Fotos exibidas na galeria "Explore por bairro" da página inicial</p></div>
       <div class="admin-topbar__actions">
         <button class="theme-toggle" data-theme-toggle aria-label="Alternar tema claro/escuro">
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
         </button>
-        <a href="add-property.html" class="btn btn-primary btn-sm">+ Novo imóvel</a>
+        <button type="button" class="btn btn-primary btn-sm" id="btnNovoBairro">+ Novo bairro</button>
       </div>
     </header>
 
     <div class="admin-content">
-      <div class="admin-toolbar">
-        <div class="search-input">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="searchInput" placeholder="Buscar por título, bairro ou cidade...">
-        </div>
-        <div class="filter-chips">
-          <button class="chip is-active" data-status="todos">Todos</button>
-          <button class="chip" data-status="ativo">Ativos</button>
-          <button class="chip" data-status="pendente">Pendentes</button>
-          <button class="chip" data-status="rascunho">Rascunhos</button>
-        </div>
-      </div>
-
-      <div class="admin-property-grid" id="propertyGrid">
-        <p class="empty-state">Carregando imóveis...</p>
+      <p class="hint" style="margin-bottom: var(--space-4);">Arraste a ordem numérica para controlar a sequência na galeria (menor número aparece primeiro).</p>
+      <div class="admin-property-grid" id="bairrosGrid">
+        <p class="empty-state">Carregando bairros...</p>
       </div>
     </div>
   </main>
 </div>
+
+<!-- Modal: novo/editar bairro -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <form id="bairroForm">
+      <div class="modal__header">
+        <div><h3 id="modalTitle">Novo bairro</h3><p>Nome e foto exibidos na galeria da home</p></div>
+        <button type="button" class="modal__close" id="modalClose" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal__body">
+        <p class="form-msg form-msg--error" id="formError" hidden></p>
+        <input type="hidden" id="bairroId">
+        <div class="avatar-picker" style="margin-bottom: var(--space-5);">
+          <img id="fotoPreview" src="https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=200&auto=format&fit=crop" alt="Prévia" style="border-radius: var(--radius-md); width: 110px; height: 78px; object-fit: cover;">
+          <div>
+            <label for="fotoInput" class="btn btn-outline btn-sm">Trocar foto</label>
+            <input type="file" id="fotoInput" accept="image/*" class="visually-hidden">
+            <p class="hint" id="fotoStatus">JPG ou PNG, formato paisagem (16:10) funciona melhor.</p>
+          </div>
+        </div>
+        <div class="field-grid field-grid--2">
+          <div class="field"><label for="nome">Nome do bairro <span class="required">*</span></label><input type="text" id="nome" required></div>
+          <div class="field"><label for="ordem">Ordem de exibição</label><input type="number" id="ordem" min="0" value="0"></div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-outline" id="modalCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="modalSubmit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth-guard.js"></script>
 <script src="../js/admin.js"></script>
-<script src="../js/properties.js"></script>
+<script src="../js/bairros.js"></script>
 </body>
 </html>
