@@ -93,3 +93,86 @@ create policy "corretor gerencia contratos" on contratos_locacao
 drop policy if exists "corretor gerencia recibos" on recibos;
 create policy "corretor gerencia recibos" on recibos
   for all using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
+
+-- ---------------------------------------------------------------------
+-- Imóveis (vitrine pública do site)
+-- ---------------------------------------------------------------------
+create table if not exists imoveis (
+  id uuid primary key default gen_random_uuid(),
+  corretor_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  slug text not null unique,
+  titulo text not null,
+  tipo text not null check (tipo in ('casa','apartamento','condominio','comercial','terreno','chacara')),
+  operacao text not null check (operacao in ('venda','aluguel')),
+  bairro text not null,
+  cidade text not null default 'Ponta Grossa',
+  endereco text,
+  preco_valor numeric(14,2),
+  preco_label text not null,
+  quartos int not null default 0,
+  suites int not null default 0,
+  banheiros int not null default 0,
+  vagas int not null default 0,
+  area_util numeric(10,2),
+  area_terreno numeric(10,2),
+  destaques jsonb not null default '[]'::jsonb,
+  badges jsonb not null default '[]'::jsonb,
+  descricao text,
+  status text not null default 'ativo' check (status in ('ativo', 'pendente', 'rascunho')),
+  capa text,
+  fotos jsonb not null default '[]'::jsonb,
+  visualizacoes int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table imoveis enable row level security;
+
+drop policy if exists "qualquer pessoa ve imoveis publicados" on imoveis;
+create policy "qualquer pessoa ve imoveis publicados" on imoveis
+  for select using (status = 'ativo' or auth.uid() = corretor_id);
+
+drop policy if exists "corretor cria imoveis" on imoveis;
+create policy "corretor cria imoveis" on imoveis
+  for insert with check (auth.uid() = corretor_id);
+
+drop policy if exists "corretor atualiza imoveis" on imoveis;
+create policy "corretor atualiza imoveis" on imoveis
+  for update using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
+
+drop policy if exists "corretor exclui imoveis" on imoveis;
+create policy "corretor exclui imoveis" on imoveis
+  for delete using (auth.uid() = corretor_id);
+
+-- ---------------------------------------------------------------------
+-- Storage: bucket público para fotos de imóveis adicionadas pelo painel
+-- ---------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('imoveis-fotos', 'imoveis-fotos', true)
+on conflict (id) do nothing;
+
+drop policy if exists "leitura publica fotos imoveis" on storage.objects;
+create policy "leitura publica fotos imoveis" on storage.objects
+  for select using (bucket_id = 'imoveis-fotos');
+
+drop policy if exists "corretor autenticado envia fotos" on storage.objects;
+create policy "corretor autenticado envia fotos" on storage.objects
+  for insert with check (bucket_id = 'imoveis-fotos' and auth.role() = 'authenticated');
+
+drop policy if exists "corretor autenticado atualiza fotos" on storage.objects;
+create policy "corretor autenticado atualiza fotos" on storage.objects
+  for update using (bucket_id = 'imoveis-fotos' and auth.role() = 'authenticated');
+
+drop policy if exists "corretor autenticado remove fotos" on storage.objects;
+create policy "corretor autenticado remove fotos" on storage.objects
+  for delete using (bucket_id = 'imoveis-fotos' and auth.role() = 'authenticated');
+
+-- ---------------------------------------------------------------------
+-- Concessão de privilégios às roles da API (necessário pois "Automatically
+-- expose new tables" ficou desativado na criação do projeto — a segurança
+-- real continua sendo garantida pelas políticas de RLS acima).
+-- ---------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+
+grant select, insert, update, delete on proprietarios, inquilinos, contratos_locacao, recibos to authenticated;
+grant select, insert, update, delete on imoveis to authenticated;
+grant select on imoveis to anon;

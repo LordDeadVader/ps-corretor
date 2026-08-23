@@ -91,12 +91,15 @@
           <label for="local">Bairro</label>
           <select id="local" name="local">
             <option value="">Todos os bairros de Ponta Grossa</option>
-            <option value="centro">Centro</option>
-            <option value="jardim-carvalho">Jardim Carvalho</option>
-            <option value="nova-russia">Nova Rússia</option>
-            <option value="oficinas">Oficinas</option>
-            <option value="uvaranas">Uvaranas</option>
-            <option value="boa-vista">Boa Vista</option>
+            <option value="Centro">Centro</option>
+            <option value="Jardim Carvalho">Jardim Carvalho</option>
+            <option value="Nova Rússia">Nova Rússia</option>
+            <option value="Oficinas">Oficinas</option>
+            <option value="Uvaranas">Uvaranas</option>
+            <option value="Boa Vista">Boa Vista</option>
+            <option value="Vila Estrela">Vila Estrela</option>
+            <option value="Contorno">Contorno</option>
+            <option value="Colônia Dona Luiza">Colônia Dona Luiza</option>
           </select>
         </div>
         <button type="submit" class="btn btn-primary search-submit">
@@ -131,35 +134,50 @@
     </button>
 
     <div class="n-panels" id="neighborhoodPanels">
-      <a href="#comprar" class="n-panel is-active" data-index="0">
+      <a href="#comprar" class="n-panel is-active" data-index="0" data-bairro="Centro">
         <img class="n-panel__img" src="assets/bairros/centro.jpg" alt="Centro, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Centro</span></span>
       </a>
-      <a href="#comprar" class="n-panel" data-index="1">
+      <a href="#comprar" class="n-panel" data-index="1" data-bairro="Jardim Carvalho">
         <img class="n-panel__img" src="assets/bairros/jardim-carvalho.jpg" alt="Jardim Carvalho, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Jardim Carvalho</span></span>
       </a>
-      <a href="#comprar" class="n-panel" data-index="2">
+      <a href="#comprar" class="n-panel" data-index="2" data-bairro="Nova Rússia">
         <img class="n-panel__img" src="assets/bairros/nova-russia.jpg" alt="Nova Rússia, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Nova Rússia</span></span>
       </a>
-      <a href="#comprar" class="n-panel" data-index="3">
+      <a href="#comprar" class="n-panel" data-index="3" data-bairro="Oficinas">
         <img class="n-panel__img" src="assets/bairros/oficinas.jpg" alt="Oficinas, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Oficinas</span></span>
       </a>
-      <a href="#comprar" class="n-panel" data-index="4">
+      <a href="#comprar" class="n-panel" data-index="4" data-bairro="Uvaranas">
         <img class="n-panel__img" src="assets/bairros/uvaranas.jpg" alt="Uvaranas, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Uvaranas</span></span>
       </a>
-      <a href="#comprar" class="n-panel" data-index="5">
+      <a href="#comprar" class="n-panel" data-index="5" data-bairro="Boa Vista">
         <img class="n-panel__img" src="assets/bairros/boa-vista.jpg" alt="Boa Vista, Ponta Grossa" loading="lazy">
         <span class="n-panel__tint"></span>
         <span class="n-panel__label"><span>Boa Vista</span></span>
+      </a>
+      <a href="#comprar" class="n-panel" data-index="6" data-bairro="Vila Estrela">
+        <img class="n-panel__img" src="https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=1200&auto=format&fit=crop" alt="Vila Estrela, Ponta Grossa" loading="lazy">
+        <span class="n-panel__tint"></span>
+        <span class="n-panel__label"><span>Vila Estrela</span></span>
+      </a>
+      <a href="#comprar" class="n-panel" data-index="7" data-bairro="Contorno">
+        <img class="n-panel__img" src="https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=1200&auto=format&fit=crop" alt="Contorno, Ponta Grossa" loading="lazy">
+        <span class="n-panel__tint"></span>
+        <span class="n-panel__label"><span>Contorno</span></span>
+      </a>
+      <a href="#comprar" class="n-panel" data-index="8" data-bairro="Colônia Dona Luiza">
+        <img class="n-panel__img" src="https://images.unsplash.com/photo-1500076656116-558758c991c1?q=80&w=1200&auto=format&fit=crop" alt="Colônia Dona Luiza, Ponta Grossa" loading="lazy">
+        <span class="n-panel__tint"></span>
+        <span class="n-panel__label"><span>Colônia Dona Luiza</span></span>
       </a>
     </div>
 
@@ -184,7 +202,18 @@
       </div>
     </div>
 
-    <div class="property-grid" id="propertyGrid"><!-- cards injetados via JS --></div>
+    <div class="property-toolbar">
+      <div class="search-field">
+        <label for="filtroBairro">Bairro</label>
+        <select id="filtroBairro"><option value="">Todos os bairros</option></select>
+      </div>
+      <div class="search-field">
+        <label for="filtroCidade">Cidade</label>
+        <select id="filtroCidade"><option value="">Todas as cidades</option></select>
+      </div>
+    </div>
+
+    <div class="property-grid" id="propertyGrid"><p class="empty-state">Carregando imóveis...</p></div>
 
     <div class="section-cta">
       <a href="#" class="btn btn-outline">Ver todos os imóveis</a>
@@ -278,6 +307,8 @@
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14.14c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.13 1.02-2.42.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.37 1.47.29.15.46.13.63-.05.17-.19.72-.84.92-1.13.19-.29.38-.24.63-.14.26.1 1.64.77 1.92.91.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
 </a>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

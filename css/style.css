@@ -128,6 +128,18 @@
 
 .section-cta { display: flex; justify-content: center; margin-top: var(--space-10); }
 
+.property-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.property-toolbar .search-field { flex: 1; min-width: 180px; padding: 0; }
+.property-toolbar select {
+  width: 100%; padding: 10px 34px 10px 12px; border-radius: var(--radius-md); border: 1px solid var(--color-border-strong);
+  background: var(--color-surface-alt); font-size: var(--fs-sm); color: var(--color-text-primary); outline: none;
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475467' stroke-width='2'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 16px;
+}
+
+.property-empty { grid-column: 1 / -1; text-align: center; padding: var(--space-10) 0; color: var(--color-text-tertiary); }
+
 /* ---------------------------- PROPERTY CARDS ---------------------------- */
 .property-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
 
@@ -138,7 +150,7 @@
 }
 .property-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 
-.property-card__media { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--color-surface-alt); }
+.property-card__media { display: block; position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--color-surface-alt); }
 .property-card__slides { display: flex; height: 100%; transition: transform var(--transition-slow); }
 .property-card__slides img { width: 100%; height: 100%; object-fit: cover; flex: 0 0 100%; }
 
@@ -171,7 +183,7 @@
 .carousel-arrow--prev { left: 10px; } .carousel-arrow--next { right: 10px; }
 .carousel-arrow svg { width: 16px; height: 16px; }
 
-.property-card__body { padding: var(--space-5); }
+.property-card__body { display: block; padding: var(--space-5); }
 .property-card__price { font-size: var(--fs-lg); font-weight: var(--fw-extrabold); color: var(--color-heading); }
 .property-card__price span { font-size: var(--fs-xs); font-weight: var(--fw-medium); color: var(--color-text-tertiary); }
 .property-card__title { margin-top: 6px; font-size: var(--fs-base); font-weight: var(--fw-semibold); color: var(--color-text-primary); }

@@ -89,106 +89,18 @@
       <div class="admin-toolbar">
         <div class="search-input">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" placeholder="Buscar por título, bairro ou cidade...">
+          <input type="text" id="searchInput" placeholder="Buscar por título, bairro ou cidade...">
         </div>
         <div class="filter-chips">
-          <button class="chip is-active">Todos</button>
-          <button class="chip">Ativos</button>
-          <button class="chip">Pendentes</button>
-          <button class="chip">Rascunhos</button>
+          <button class="chip is-active" data-status="todos">Todos</button>
+          <button class="chip" data-status="ativo">Ativos</button>
+          <button class="chip" data-status="pendente">Pendentes</button>
+          <button class="chip" data-status="rascunho">Rascunhos</button>
         </div>
       </div>
 
-      <div class="admin-property-grid">
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--ativo admin-property-card__status">Ativo</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 1.250.000</p>
-            <p class="admin-property-card__title">Casa contemporânea com piscina</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">842 visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--pendente admin-property-card__status">Pendente</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 5.800/mês</p>
-            <p class="admin-property-card__title">Apartamento moderno com vista</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">396 visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--rascunho admin-property-card__status">Rascunho</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 890.000</p>
-            <p class="admin-property-card__title">Cobertura duplex reformada</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">— visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--ativo admin-property-card__status">Ativo</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 3.200/mês</p>
-            <p class="admin-property-card__title">Studio elegante no centro</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">211 visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--ativo admin-property-card__status">Ativo</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 2.100.000</p>
-            <p class="admin-property-card__title">Casa de condomínio com jardim</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">1.204 visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="admin-property-card">
-          <div class="admin-property-card__img">
-            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=500&auto=format&fit=crop" alt="">
-            <span class="status-pill status-pill--ativo admin-property-card__status">Ativo</span>
-          </div>
-          <div class="admin-property-card__body">
-            <p class="admin-property-card__price">R$ 420.000</p>
-            <p class="admin-property-card__title">Terreno plano em condomínio fechado</p>
-            <div class="admin-property-card__foot">
-              <span class="admin-property-card__stats">158 visualizações</span>
-              <div class="row-actions"><button aria-label="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
-            </div>
-          </div>
-        </article>
+      <div class="admin-property-grid" id="propertyGrid">
+        <p class="empty-state">Carregando imóveis...</p>
       </div>
     </div>
   </main>
@@ -197,5 +109,6 @@
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth-guard.js"></script>
 <script src="../js/admin.js"></script>
+<script src="../js/properties.js"></script>
 </body>
 </html>
