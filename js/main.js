@@ -213,27 +213,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadProperties();
 
-  /* ---- Galeria de bairros ----
+  /* ---- Galeria de bairros ("sanfona") ----
      As fotos vêm do Supabase (editáveis pelo corretor em admin/bairros.html);
      o HTML estático do index.html fica como fallback caso a busca falhe.
-     Desktop (mouse): "sanfona" — passar o mouse expande o painel em foco.
-     Mobile/toque: carrossel simples — os cards navegam direto ao toque,
-     as setas só rolam para o próximo/anterior. Sem estado de expandir, que
-     conflita com o gesto nativo de arrastar em telas de toque. */
+     Funciona em qualquer largura de tela: passar o mouse expande um painel
+     (só em dispositivos com hover); as setinhas fazem o mesmo em qualquer
+     dispositivo, inclusive por toque. A largura do painel expandido é
+     calculada em pixels reais a partir do contêiner — nunca em vw, que se
+     comporta de forma inconsistente entre navegadores de celular. */
   function initNeighborhoodGallery() {
     const nPanelsEl = document.getElementById('neighborhoodPanels');
     if (!nPanelsEl) return;
     const panels = Array.from(nPanelsEl.querySelectorAll('.n-panel'));
     const gallery = document.getElementById('neighborhoodGallery');
     const isHoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const isDesktopFullBleed = () => window.matchMedia('(min-width: 1024px)').matches;
+
+    function setActivePanel(index) {
+      panels.forEach((p, i) => {
+        const active = i === index;
+        p.classList.toggle('is-active', active);
+        // No modo full-bleed do desktop o tamanho vem do CSS (flex-grow).
+        // Nos demais tamanhos, calculamos a largura real em px do painel
+        // expandido a partir do contêiner, para se adaptar a qualquer tela.
+        if (isDesktopFullBleed()) {
+          p.style.flexBasis = '';
+        } else if (active) {
+          const w = Math.min(nPanelsEl.clientWidth * 0.72, 340);
+          p.style.flexBasis = Math.round(w) + 'px';
+        } else {
+          p.style.flexBasis = '';
+        }
+      });
+      nPanelsEl.classList.add('has-active');
+      panels[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
 
     if (isHoverCapable) {
-      function setActivePanel(index) {
-        panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
-        nPanelsEl.classList.add('has-active');
-      }
       panels.forEach((panel, index) => panel.addEventListener('mouseenter', () => setActivePanel(index)));
-      nPanelsEl.addEventListener('mouseleave', () => nPanelsEl.classList.remove('has-active'));
+      nPanelsEl.addEventListener('mouseleave', () => {
+        nPanelsEl.classList.remove('has-active');
+        panels.forEach(p => { p.style.flexBasis = ''; });
+      });
     }
 
     panels.forEach(panel => panel.addEventListener('click', (e) => {
@@ -248,7 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('comprar').scrollIntoView({ behavior: 'smooth' });
     }));
 
-    function currentPanelIndex() {
+    function currentActiveIndex() {
+      const active = panels.findIndex(p => p.classList.contains('is-active') && nPanelsEl.classList.contains('has-active'));
+      if (active !== -1) return active;
       const center = nPanelsEl.scrollLeft + nPanelsEl.clientWidth / 2;
       let closest = 0, minDist = Infinity;
       panels.forEach((p, i) => {
@@ -261,9 +284,20 @@ document.addEventListener('DOMContentLoaded', () => {
     gallery.querySelectorAll('.n-gallery__arrow').forEach(btn => {
       btn.addEventListener('click', () => {
         const dir = parseInt(btn.dataset.dir, 10);
-        const next = Math.min(Math.max(currentPanelIndex() + dir, 0), panels.length - 1);
-        panels[next].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        const next = Math.min(Math.max(currentActiveIndex() + dir, 0), panels.length - 1);
+        setActivePanel(next);
       });
+    });
+
+    // Recalcula a largura do painel ativo se a tela for redimensionada
+    // (rotação do celular, janela do navegador, etc.) — mantém adaptado.
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const active = panels.findIndex(p => p.classList.contains('is-active'));
+        if (active !== -1 && nPanelsEl.classList.contains('has-active')) setActivePanel(active);
+      }, 150);
     });
   }
 
