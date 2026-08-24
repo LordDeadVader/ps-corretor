@@ -269,11 +269,16 @@
 .n-gallery__arrow--prev { left: var(--space-2); }
 .n-gallery__arrow--next { right: var(--space-2); }
 
-/* ---- Desktop (>=1024px): faixa full-bleed borda a borda, setinhas escondidas
-   (o hover já cumpre o mesmo papel) ---- */
+/* Setinhas só fazem sentido em quem não tem mouse — em qualquer dispositivo
+   com hover (independente da largura da janela) o próprio hover já expande
+   o painel, então escondemos os botões de navegação. */
+@media (hover: hover) and (pointer: fine) {
+  .n-gallery__arrow { display: none; }
+}
+
+/* ---- Desktop (>=1024px): faixa full-bleed borda a borda ---- */
 @media (min-width: 1024px) {
   .n-gallery { width: 100vw; margin-left: 50%; transform: translateX(-50%); }
-  .n-gallery__arrow { display: none; }
   .n-panels { overflow: visible; height: 480px; padding: 0; gap: 3px; }
   .n-panel { flex-basis: 0; flex-grow: 1; }
   .n-panels.has-active .n-panel { flex-basis: 0; }
