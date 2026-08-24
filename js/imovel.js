@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="imovel-price-card">
             <p class="imovel-price-card__label">${p.operacao === 'venda' ? 'Valor de venda' : 'Valor de locação'}</p>
             <p class="imovel-price-card__value">${escapeHtml(p.preco_label)}</p>
-            <a href="https://wa.me/5542999000000?text=${whatsappMsg}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-block">Falar no WhatsApp</a>
+            <a href="https://wa.me/5542999549354?text=${whatsappMsg}" target="_blank" rel="noopener" class="btn btn-primary btn-lg btn-block">Falar no WhatsApp</a>
             <p class="imovel-price-card__note">Resposta rápida em horário comercial</p>
           </div>
           <div class="imovel-agent-card">
