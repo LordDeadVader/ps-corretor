@@ -246,7 +246,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       nPanelsEl.classList.add('has-active');
-      panels[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      // No full-bleed do desktop o painel já ocupa a linha toda — não há o
+      // que rolar. Chamar scrollIntoView aqui faria o navegador tentar
+      // centralizar o painel rolando a PÁGINA inteira na horizontal (já que
+      // .n-panels não é um contêiner de scroll nesse modo), empurrando tudo
+      // para o lado ao passar o mouse. Só faz sentido no carrossel contido.
+      if (!isDesktopFullBleed()) {
+        panels[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
 
     if (isHoverCapable) {
