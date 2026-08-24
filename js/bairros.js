@@ -103,8 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
       openModal(record);
     } else if (btn.dataset.action === 'delete') {
       if (!confirm(`Excluir o bairro "${record.nome}" da galeria da home?`)) return;
-      const { error } = await supabaseClient.from('bairros_destaque').delete().eq('id', id);
+      const { data, error } = await supabaseClient.from('bairros_destaque').delete().eq('id', id).select();
       if (error) { alert('Não foi possível excluir: ' + error.message); return; }
+      if (!data || !data.length) { alert('Este bairro pertence a outra conta — você não tem permissão para excluí-lo.'); return; }
       loadBairros();
     }
   });
@@ -125,16 +126,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!id) payload.slug = `${slugify(nome)}-${Date.now().toString(36)}`;
 
     const query = id
-      ? supabaseClient.from('bairros_destaque').update(payload).eq('id', id)
-      : supabaseClient.from('bairros_destaque').insert(payload);
+      ? supabaseClient.from('bairros_destaque').update(payload).eq('id', id).select()
+      : supabaseClient.from('bairros_destaque').insert(payload).select();
 
-    const { error } = await query;
+    const { data, error } = await query;
 
     modalSubmit.disabled = false;
     modalSubmit.textContent = 'Salvar';
 
     if (error) {
       formError.textContent = 'Erro ao salvar: ' + error.message;
+      formError.hidden = false;
+      return;
+    }
+    if (!data || !data.length) {
+      formError.textContent = 'Não foi possível salvar: este bairro pertence a outra conta e você não tem permissão para editá-lo.';
       formError.hidden = false;
       return;
     }

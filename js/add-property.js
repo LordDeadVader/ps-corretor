@@ -171,19 +171,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = document.getElementById('imovelId').value;
     let query;
     if (id) {
-      query = supabaseClient.from('imoveis').update(payload).eq('id', id);
+      query = supabaseClient.from('imoveis').update(payload).eq('id', id).select();
     } else {
       payload.slug = `${slugify(titulo)}-${Date.now().toString(36)}`;
-      query = supabaseClient.from('imoveis').insert(payload);
+      query = supabaseClient.from('imoveis').insert(payload).select();
     }
 
-    const { error } = await query;
+    const { data, error } = await query;
 
     submitBtn.disabled = false;
     submitBtn.textContent = id ? 'Salvar Alterações' : 'Publicar Imóvel';
 
     if (error) {
       formError.textContent = 'Erro ao salvar: ' + error.message;
+      formError.hidden = false;
+      return;
+    }
+    if (!data || !data.length) {
+      formError.textContent = 'Não foi possível salvar: este imóvel pertence a outra conta e você não tem permissão para editá-lo.';
       formError.hidden = false;
       return;
     }

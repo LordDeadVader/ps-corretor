@@ -81,8 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = btn.dataset.id;
     const p = allProperties.find(x => x.id === id);
     if (!confirm(`Excluir o imóvel "${p.titulo}"? Essa ação não pode ser desfeita.`)) return;
-    const { error } = await supabaseClient.from('imoveis').delete().eq('id', id);
+    const { data, error } = await supabaseClient.from('imoveis').delete().eq('id', id).select();
     if (error) { alert('Não foi possível excluir: ' + error.message); return; }
+    if (!data || !data.length) { alert('Este imóvel pertence a outra conta — você não tem permissão para excluí-lo.'); return; }
     loadProperties();
   });
 

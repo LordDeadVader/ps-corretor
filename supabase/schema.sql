@@ -250,6 +250,15 @@ create policy "corretor gerencia bairros" on bairros_destaque
 grant select, insert, update, delete on bairros_destaque to authenticated;
 grant select on bairros_destaque to anon;
 
+-- ---------------------------------------------------------------------
+-- Migrações para instalações já existentes — "create table if not exists"
+-- não adiciona colunas novas a tabelas que já existem, então qualquer
+-- coluna adicionada depois da criação inicial precisa vir como ALTER
+-- explícito aqui (idempotente, seguro rodar de novo).
+-- ---------------------------------------------------------------------
+alter table contratos_locacao add column if not exists imovel_id uuid references imoveis(id) on delete set null;
+alter table imoveis add column if not exists fotos_destaque jsonb not null default '[]'::jsonb;
+
 insert into storage.buckets (id, name, public)
 values ('bairros', 'bairros', true)
 on conflict (id) do nothing;
