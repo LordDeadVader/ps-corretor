@@ -49,3 +49,12 @@ Depois acesse `http://localhost:5500`.
 - **Cores:** fundo off-white, azul-marinho como cor primária, dourado/cobre como cor de destaque (CTAs).
 - **Tipografia:** Inter (Google Fonts).
 - **Componentes:** cantos arredondados (8–16px), sombras suaves, transições em hover.
+
+## LGPD
+
+O projeto tem uma estrutura de conformidade com a LGPD (banner de cookies com bloqueio
+real de scripts, Central de Privacidade em `/privacidade.html`, formulário de
+solicitação de direitos dos titulares, registro de consentimento). Documentação
+completa em [`docs/lgpd/README.md`](docs/lgpd/README.md) — inclui o que precisa ser
+rodado no Supabase (`supabase/schema-lgpd.sql`) e o que ainda depende de preenchimento
+pelo responsável (CNPJ, DPO, prazos de retenção).
