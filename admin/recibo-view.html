@@ -99,41 +99,21 @@
     return (str == null ? '' : String(str)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  /* ---- Pix "Copia e Cola" (padrão BR Code / EMV, gerado 100% no navegador) ----
-     Monta o payload com o valor exato do recibo já embutido, para o inquilino
-     só escanear/colar e pagar sem digitar nada. */
+  /* ---- Pix — código fixo (mesma chave em todo recibo, sem valor embutido) ----
+     O inquilino escaneia o QR (imagem estática local, sem depender de nenhum
+     serviço externo) ou copia o código "copia e cola" e confirma o valor no
+     app do banco — igual ao aviso de pagamento em papel que já era usado. */
   const PIX_CONFIG = {
     chaves: [
       { label: 'E-mail', valor: 'paulosouzalocacao@gmail.com' },
       { label: 'Telefone', valor: '+5542999549354', exibicao: '(42) 99954-9354' },
     ],
     banco: 'Banco C6',
-    nome: 'Paulo Souza',
-    cidade: 'Ponta Grossa',
+    // Código Pix "copia e cola" (padrão BR Code/EMV) gerado uma única vez para
+    // a chave de e-mail, sem campo de valor — o mesmo texto em todo recibo.
+    // O QR correspondente está salvo em assets/pix-qrcode.png.
+    copiaECola: '00020126490014br.gov.bcb.pix0127paulosouzalocacao@gmail.com5204000053039865802BR5911PAULO SOUZA6012PONTA GROSSA62070503***63049C36',
   };
-
-  function crc16(payload) {
-    let crc = 0xFFFF;
-    for (let i = 0; i < payload.length; i++) {
-      crc ^= payload.charCodeAt(i) << 8;
-      for (let b = 0; b < 8; b++) {
-        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
-        crc &= 0xFFFF;
-      }
-    }
-    return crc.toString(16).toUpperCase().padStart(4, '0');
-  }
-  function tlv(id, value) { return id + String(value.length).padStart(2, '0') + value; }
-  function buildPixPayload({ chave, valor, txid }) {
-    const nome = PIX_CONFIG.nome.toUpperCase().slice(0, 25);
-    const cidade = PIX_CONFIG.cidade.toUpperCase().slice(0, 15);
-    const ref = (txid || '***').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 25) || '***';
-    let merchantAccount = tlv('00', 'br.gov.bcb.pix') + tlv('01', chave);
-    let payload = tlv('00', '01') + tlv('26', merchantAccount) + tlv('52', '0000') + tlv('53', '986');
-    if (valor) payload += tlv('54', Number(valor).toFixed(2));
-    payload += tlv('58', 'BR') + tlv('59', nome) + tlv('60', cidade) + tlv('62', tlv('05', ref)) + '6304';
-    return payload + crc16(payload);
-  }
 
   function copyToClipboard(text, btn) {
     const original = btn.textContent;
@@ -159,12 +139,9 @@
     }
   }
   window.copyPixKey = function (valor, btn) { copyToClipboard(valor, btn); };
-  window.copyPixPayload = function (btn) { copyToClipboard(window.__pixPayload || '', btn); };
+  window.copyPixPayload = function (btn) { copyToClipboard(PIX_CONFIG.copiaECola, btn); };
 
-  function renderPixBlock(valor, referencia) {
-    const payload = buildPixPayload({ chave: PIX_CONFIG.chaves[0].valor, valor, txid: referencia });
-    window.__pixPayload = payload;
-    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(payload);
+  function renderPixBlock(valor) {
     const keysHtml = PIX_CONFIG.chaves.map(k => `
       <div class="recibo-pix__key">
         <div><span>${escapeHtml(k.label)}</span><strong>${escapeHtml(k.exibicao || k.valor)}</strong></div>
@@ -177,15 +154,15 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><rect x="7" y="7" width="10" height="10" rx="2"/></svg>
             Pague via Pix
           </p>
-          <p class="recibo-pix__bank">${escapeHtml(PIX_CONFIG.banco)} — valor de ${formatMoney(valor)} já preenchido no QR Code</p>
+          <p class="recibo-pix__bank">${escapeHtml(PIX_CONFIG.banco)} — valor a pagar: ${formatMoney(valor)}</p>
           <div class="recibo-pix__keys">${keysHtml}</div>
           <div class="recibo-pix__copiaecola">
             <button type="button" onclick="copyPixPayload(this)">Copiar código Pix (copia e cola)</button>
           </div>
         </div>
         <div class="recibo-pix__qr">
-          <img src="${qrUrl}" alt="QR Code Pix" width="152" height="152">
-          <p>Aponte a câmera do banco para pagar</p>
+          <img src="../assets/pix-qrcode.png" alt="QR Code Pix" width="152" height="152">
+          <p>Aponte a câmera do banco e confirme o valor acima</p>
         </div>
       </div>`;
   }
@@ -223,7 +200,7 @@
         <p class="valor">${formatMoney(r.valor)}</p>
       </div>
 
-      ${renderPixBlock(r.valor, r.referencia)}
+      ${renderPixBlock(r.valor)}
 
       <p class="recibo-texto">
         Recebi de <strong>${escapeHtml(inquilino?.nome) || '________________________'}</strong>${inquilino?.cpf_cnpj ? ' (CPF/CNPJ ' + escapeHtml(inquilino.cpf_cnpj) + ')' : ''},
