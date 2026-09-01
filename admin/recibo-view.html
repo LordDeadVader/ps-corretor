@@ -19,6 +19,7 @@
   .recibo-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); border-bottom: 2px solid var(--color-navy-900); padding-bottom: var(--space-5); }
   .recibo-head img { height: 52px; }
   .recibo-head h1 { font-size: var(--fs-lg); font-weight: var(--fw-extrabold); color: var(--color-navy-900); }
+  .recibo-head .eyebrow { font-size: 11px; font-weight: var(--fw-bold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-gold-600); margin-bottom: 2px; }
   .recibo-head .num { text-align: right; font-size: var(--fs-sm); color: var(--color-text-tertiary); }
   .recibo-valor { text-align: center; margin: var(--space-6) 0; }
   .recibo-valor .label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); }
@@ -27,12 +28,49 @@
   .recibo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin: var(--space-6) 0; font-size: var(--fs-sm); }
   .recibo-grid div span { display: block; font-size: var(--fs-xs); color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
   .recibo-obs { font-size: var(--fs-sm); color: var(--color-text-secondary); border-top: 1px dashed var(--color-border-strong); padding-top: var(--space-4); margin-top: var(--space-4); }
+
+  /* ---- Bloco de pagamento via Pix ---- */
+  .recibo-pix {
+    display: grid; grid-template-columns: 1fr auto; gap: var(--space-6); align-items: center;
+    margin: var(--space-6) 0; padding: var(--space-5); border-radius: var(--radius-lg);
+    background: linear-gradient(155deg, #0E2748 0%, #071426 100%); color: #fff;
+  }
+  .recibo-pix__title { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-gold-400); }
+  .recibo-pix__title svg { width: 18px; height: 18px; }
+  .recibo-pix__bank { font-size: var(--fs-xs); color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .recibo-pix__keys { margin-top: var(--space-4); display: flex; flex-direction: column; gap: 10px; }
+  .recibo-pix__key { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 9px 12px; }
+  .recibo-pix__key div { min-width: 0; }
+  .recibo-pix__key span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); }
+  .recibo-pix__key strong { display: block; font-size: var(--fs-sm); font-weight: var(--fw-semibold); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .recibo-pix__key button {
+    flex-shrink: 0; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff;
+    font-size: 11px; font-weight: var(--fw-semibold); padding: 6px 10px; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .recibo-pix__key button:hover { background: rgba(255,255,255,0.18); }
+  .recibo-pix__key button.is-copied { background: var(--color-gold-500); border-color: var(--color-gold-500); }
+  .recibo-pix__qr { text-align: center; }
+  .recibo-pix__qr img { width: 152px; height: 152px; border-radius: 10px; background: #fff; padding: 8px; display: block; }
+  .recibo-pix__qr p { margin-top: 8px; font-size: 10px; color: rgba(255,255,255,0.55); max-width: 152px; }
+  .recibo-pix__copiaecola { margin-top: var(--space-4); }
+  .recibo-pix__copiaecola button {
+    width: 100%; border: 1px dashed rgba(255,255,255,0.3); background: transparent; color: rgba(255,255,255,0.85);
+    font-size: 11px; font-weight: var(--fw-semibold); padding: 8px; border-radius: var(--radius-sm); cursor: pointer;
+  }
+  .recibo-pix__copiaecola button:hover { background: rgba(255,255,255,0.06); }
+
   .recibo-sign { margin-top: var(--space-10); text-align: center; }
   .recibo-sign .line { border-top: 1px solid var(--color-text-primary); width: 320px; margin: 0 auto; padding-top: 8px; font-size: var(--fs-sm); }
   @media print {
     body { background: #fff; padding: 0; }
     .recibo-toolbar { display: none; }
     .recibo-sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+    .recibo-pix__key button, .recibo-pix__copiaecola { display: none; }
+  }
+  @media (max-width: 480px) {
+    .recibo-pix { grid-template-columns: 1fr; }
+    .recibo-pix__qr { justify-self: center; }
   }
 </style>
 </head>
@@ -61,6 +99,97 @@
     return (str == null ? '' : String(str)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  /* ---- Pix "Copia e Cola" (padrão BR Code / EMV, gerado 100% no navegador) ----
+     Monta o payload com o valor exato do recibo já embutido, para o inquilino
+     só escanear/colar e pagar sem digitar nada. */
+  const PIX_CONFIG = {
+    chaves: [
+      { label: 'E-mail', valor: 'paulosouzalocacao@gmail.com' },
+      { label: 'Telefone', valor: '+5542999549354', exibicao: '(42) 99954-9354' },
+    ],
+    banco: 'Banco C6',
+    nome: 'Paulo Souza',
+    cidade: 'Ponta Grossa',
+  };
+
+  function crc16(payload) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < payload.length; i++) {
+      crc ^= payload.charCodeAt(i) << 8;
+      for (let b = 0; b < 8; b++) {
+        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+        crc &= 0xFFFF;
+      }
+    }
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+  }
+  function tlv(id, value) { return id + String(value.length).padStart(2, '0') + value; }
+  function buildPixPayload({ chave, valor, txid }) {
+    const nome = PIX_CONFIG.nome.toUpperCase().slice(0, 25);
+    const cidade = PIX_CONFIG.cidade.toUpperCase().slice(0, 15);
+    const ref = (txid || '***').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 25) || '***';
+    let merchantAccount = tlv('00', 'br.gov.bcb.pix') + tlv('01', chave);
+    let payload = tlv('00', '01') + tlv('26', merchantAccount) + tlv('52', '0000') + tlv('53', '986');
+    if (valor) payload += tlv('54', Number(valor).toFixed(2));
+    payload += tlv('58', 'BR') + tlv('59', nome) + tlv('60', cidade) + tlv('62', tlv('05', ref)) + '6304';
+    return payload + crc16(payload);
+  }
+
+  function copyToClipboard(text, btn) {
+    const original = btn.textContent;
+    function ok() {
+      btn.textContent = 'Copiado!';
+      btn.classList.add('is-copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('is-copied'); }, 1800);
+    }
+    function fallback() {
+      // navigator.clipboard exige contexto seguro + documento em foco; se falhar
+      // (ex.: aba em segundo plano), cai para o método clássico via textarea.
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); ok(); }
+      catch (e) { btn.textContent = 'Não foi possível copiar'; setTimeout(() => { btn.textContent = original; }, 2200); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(ok).catch(fallback);
+    } else {
+      fallback();
+    }
+  }
+  window.copyPixKey = function (valor, btn) { copyToClipboard(valor, btn); };
+  window.copyPixPayload = function (btn) { copyToClipboard(window.__pixPayload || '', btn); };
+
+  function renderPixBlock(valor, referencia) {
+    const payload = buildPixPayload({ chave: PIX_CONFIG.chaves[0].valor, valor, txid: referencia });
+    window.__pixPayload = payload;
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(payload);
+    const keysHtml = PIX_CONFIG.chaves.map(k => `
+      <div class="recibo-pix__key">
+        <div><span>${escapeHtml(k.label)}</span><strong>${escapeHtml(k.exibicao || k.valor)}</strong></div>
+        <button type="button" onclick="copyPixKey('${escapeHtml(k.valor)}', this)">Copiar</button>
+      </div>`).join('');
+    return `
+      <div class="recibo-pix">
+        <div>
+          <p class="recibo-pix__title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><rect x="7" y="7" width="10" height="10" rx="2"/></svg>
+            Pague via Pix
+          </p>
+          <p class="recibo-pix__bank">${escapeHtml(PIX_CONFIG.banco)} — valor de ${formatMoney(valor)} já preenchido no QR Code</p>
+          <div class="recibo-pix__keys">${keysHtml}</div>
+          <div class="recibo-pix__copiaecola">
+            <button type="button" onclick="copyPixPayload(this)">Copiar código Pix (copia e cola)</button>
+          </div>
+        </div>
+        <div class="recibo-pix__qr">
+          <img src="${qrUrl}" alt="QR Code Pix" width="152" height="152">
+          <p>Aponte a câmera do banco para pagar</p>
+        </div>
+      </div>`;
+  }
+
   (async function loadRecibo() {
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
@@ -85,14 +214,16 @@
     sheet.innerHTML = `
       <div class="recibo-head">
         <img src="../assets/logo-icon.png" alt="PS Corretor">
-        <div><h1>Recibo de Aluguel</h1></div>
+        <div><p class="eyebrow">Recibo · Aviso de Pagamento</p><h1>Aluguel — ${escapeHtml(r.referencia)}</h1></div>
         <div class="num">Referência<br><strong>${escapeHtml(r.referencia)}</strong></div>
       </div>
 
       <div class="recibo-valor">
-        <p class="label">Valor recebido</p>
+        <p class="label">Valor a pagar / recebido</p>
         <p class="valor">${formatMoney(r.valor)}</p>
       </div>
+
+      ${renderPixBlock(r.valor, r.referencia)}
 
       <p class="recibo-texto">
         Recebi de <strong>${escapeHtml(inquilino?.nome) || '________________________'}</strong>${inquilino?.cpf_cnpj ? ' (CPF/CNPJ ' + escapeHtml(inquilino.cpf_cnpj) + ')' : ''},
