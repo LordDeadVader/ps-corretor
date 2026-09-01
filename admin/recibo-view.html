@@ -62,15 +62,53 @@
 
   .recibo-sign { margin-top: var(--space-10); text-align: center; }
   .recibo-sign .line { border-top: 1px solid var(--color-text-primary); width: 320px; margin: 0 auto; padding-top: 8px; font-size: var(--fs-sm); }
+
+  .recibo-toolbar__actions { display: flex; gap: var(--space-2); }
+  .share-wrap { position: relative; }
+  #shareBtn svg { width: 15px; height: 15px; }
+  .share-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 160px;
+    background: var(--color-surface); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg); padding: 6px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .share-menu button {
+    display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border: none; background: none;
+    border-radius: var(--radius-sm); font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--color-text-primary);
+    cursor: pointer; text-align: left;
+  }
+  .share-menu button:hover { background: var(--color-surface-alt); }
+  .share-menu svg { width: 17px; height: 17px; flex-shrink: 0; color: var(--color-text-secondary); }
+  .share-menu button#shareWhatsappOpt svg { color: #25D366; }
+
+  /* ---- Impressão: sempre 1 folha A4, conteúdo compactado para caber ---- */
+  @page { size: A4; margin: 10mm; }
   @media print {
-    body { background: #fff; padding: 0; }
+    html, body { background: #fff; }
+    body { padding: 0; }
     .recibo-toolbar { display: none; }
-    .recibo-sheet { box-shadow: none; border-radius: 0; max-width: 100%; }
+    .recibo-sheet {
+      box-shadow: none; border-radius: 0; max-width: 100%; padding: 0;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .recibo-head { padding-bottom: 12px; }
+    .recibo-head img { height: 40px; }
+    .recibo-valor { margin: 14px 0; }
+    .recibo-valor .valor { font-size: 26px; }
+    .recibo-pix { margin: 14px 0; padding: 14px; gap: 16px; }
+    .recibo-pix__keys { margin-top: 10px; gap: 6px; }
+    .recibo-pix__key { padding: 6px 10px; }
+    .recibo-pix__qr img { width: 110px; height: 110px; padding: 6px; }
+    .recibo-pix__qr p { font-size: 9px; margin-top: 5px; }
+    .recibo-texto { margin: 14px 0; font-size: 13px; line-height: 1.55; }
+    .recibo-grid { margin: 14px 0; }
+    .recibo-obs { margin-top: 10px; padding-top: 10px; }
+    .recibo-sign { margin-top: 22px; }
     .recibo-pix__key button, .recibo-pix__copiaecola { display: none; }
   }
   @media (max-width: 480px) {
     .recibo-pix { grid-template-columns: 1fr; }
     .recibo-pix__qr { justify-self: center; }
+    .recibo-toolbar { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -78,7 +116,25 @@
 
 <div class="recibo-toolbar">
   <a href="locacao-contratos.html" class="btn btn-outline btn-sm">&larr; Voltar</a>
-  <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Imprimir / Salvar PDF</button>
+  <div class="recibo-toolbar__actions">
+    <div class="share-wrap">
+      <button type="button" class="btn btn-outline btn-sm" id="shareBtn" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>
+        Compartilhar
+      </button>
+      <div class="share-menu" id="shareMenu" hidden>
+        <button type="button" id="shareWhatsappOpt">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2Zm5.8 14.14c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.9-1.25-4.8-4.16-4.94-4.35-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.13 1.02-2.42.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.58.81 2 .88 2.14.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.37 1.47.29.15.46.13.63-.05.17-.19.72-.84.92-1.13.19-.29.38-.24.63-.14.26.1 1.64.77 1.92.91.29.15.48.22.55.34.07.13.07.72-.17 1.4Z"/></svg>
+          WhatsApp
+        </button>
+        <button type="button" id="shareEmailOpt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          E-mail
+        </button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
 </div>
 
 <div class="recibo-sheet" id="reciboSheet">
@@ -220,7 +276,63 @@
         <div class="line">${escapeHtml(proprietario?.nome) || 'Proprietário(a)'}</div>
       </div>
     `;
+
+    setupShare(r, inquilino);
   })();
+
+  /* ---- Compartilhar ----
+     Manda um texto pronto (não um link do painel, que exige login) com os
+     dados do pagamento e a chave/código Pix.
+     Em celular, usa o menu nativo de compartilhamento (Web Share API) — o
+     inquilino escolhe WhatsApp, e-mail, SMS, o que tiver instalado. Onde
+     essa API não existe (a maioria dos navegadores de computador), mostra
+     um menuzinho simples com WhatsApp e E-mail. */
+  function buildShareText(r, inquilino) {
+    const nome = inquilino?.nome ? `Olá, ${inquilino.nome.split(' ')[0]}! ` : 'Olá! ';
+    const chave = PIX_CONFIG.chaves[0];
+    return `${nome}Segue o aviso de pagamento do aluguel — *${r.referencia}*.\n\n` +
+      `*Valor:* ${formatMoney(r.valor)}\n` +
+      `*Vencimento/Pagamento:* ${formatDateExtenso(r.data_pagamento)}\n\n` +
+      `*Pague via Pix* (${PIX_CONFIG.banco}):\n` +
+      `Chave (${chave.label}): ${chave.exibicao || chave.valor}\n\n` +
+      `Código Pix copia e cola:\n${PIX_CONFIG.copiaECola}\n\n` +
+      `Qualquer dúvida, é só chamar. Obrigado!`;
+  }
+
+  function setupShare(r, inquilino) {
+    const btn = document.getElementById('shareBtn');
+    const menu = document.getElementById('shareMenu');
+    const text = buildShareText(r, inquilino);
+    const title = `Aviso de pagamento — Aluguel ${r.referencia}`;
+    btn.hidden = false;
+
+    if (navigator.share) {
+      // Menu nativo do sistema: sem dropdown próprio, cada clique já abre o
+      // seletor de apps (WhatsApp, e-mail, SMS, Drive...).
+      btn.addEventListener('click', async () => {
+        try { await navigator.share({ title, text }); }
+        catch (e) { /* usuário cancelou o menu — não faz nada */ }
+      });
+      return;
+    }
+
+    // Sem Web Share API (desktop): dropdown com as duas opções mais usadas.
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+    });
+    document.getElementById('shareWhatsappOpt').addEventListener('click', () => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+      menu.hidden = true;
+    });
+    document.getElementById('shareEmailOpt').addEventListener('click', () => {
+      window.location.href = 'mailto:?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(text);
+      menu.hidden = true;
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.hidden && !menu.contains(e.target) && e.target !== btn) menu.hidden = true;
+    });
+  }
 </script>
 </body>
 </html>
