@@ -66,7 +66,15 @@
   .recibo-toolbar__actions { display: flex; gap: var(--space-2); }
   .share-wrap { position: relative; }
   #shareBtn svg { width: 15px; height: 15px; }
-  .share-menu {
+  /* .btn define display:inline-flex e, como regra de autor, vence a regra
+     [hidden] do navegador mesmo com o atributo presente — sem isso o botão
+     apareceria antes dos dados do recibo carregarem. */
+  #shareBtn[hidden] { display: none; }
+  /* [hidden] some com display:none pelo navegador, mas a regra de layout
+     abaixo (display:flex) tem mais especificidade e vencia — o menu ficava
+     sempre visível. Precisa do :not([hidden]) para respeitar o atributo. */
+  .share-menu[hidden] { display: none; }
+  .share-menu:not([hidden]) {
     position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 160px;
     background: var(--color-surface); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg); padding: 6px; display: flex; flex-direction: column; gap: 2px;
