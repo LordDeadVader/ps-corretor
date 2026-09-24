@@ -77,7 +77,7 @@ todos os placeholders está em `privacidade.html` e nos documentos desta pasta:
    registro de auditoria e o recebimento de solicitações não terão onde salvar.
 2. Preencher em `privacidade.html`: CNPJ/razão social (se houver), nome do encarregado
    (DPO) e um e-mail dedicado de privacidade, se o responsável quiser um diferente do
-   e-mail de contato geral já usado (`contato@paulosouzaimoveis.com.br`).
+   e-mail de contato geral já usado (`contato@pscorretordeimoveis.com.br`).
 3. Confirmar a região do servidor Supabase (para a seção de transferência
    internacional da política) — painel do Supabase → Settings → General.
 4. Definir prazos de retenção de dados (ver `retention.md`) e, se desejado, uma

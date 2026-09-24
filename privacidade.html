@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Central de Privacidade — Paulo Souza Corretor de Imóveis</title>
 <meta name="description" content="Política de Privacidade, Política de Cookies e canal para exercer seus direitos como titular de dados pessoais, conforme a LGPD (Lei nº 13.709/2018).">
+<link rel="canonical" href="https://pscorretordeimoveis.com.br/privacidade.html">
+<!-- Open Graph / WhatsApp / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://pscorretordeimoveis.com.br/privacidade.html">
+<meta property="og:title" content="Central de Privacidade — Paulo Souza Corretor de Imóveis">
+<meta property="og:description" content="Política de Privacidade, Política de Cookies e canal para exercer seus direitos como titular de dados pessoais (LGPD).">
+<meta property="og:image" content="https://pscorretordeimoveis.com.br/assets/logo.png">
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Central de Privacidade — Paulo Souza Corretor de Imóveis">
+<meta name="twitter:description" content="Política de Privacidade, Política de Cookies e canal para exercer seus direitos como titular de dados pessoais (LGPD).">
+<meta name="twitter:image" content="https://pscorretordeimoveis.com.br/assets/logo.png">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,7 +112,7 @@
             <tr><th>CRECI</th><td>F-18971</td></tr>
             <tr><th>CNPJ</th><td><span class="placeholder">[CNPJ]</span></td></tr>
             <tr><th>Endereço</th><td>Rua Marechal Mallet, 75D — Ponta Grossa/PR</td></tr>
-            <tr><th>E-mail de contato</th><td>contato@paulosouzaimoveis.com.br</td></tr>
+            <tr><th>E-mail de contato</th><td>contato@pscorretordeimoveis.com.br</td></tr>
             <tr><th>Telefone / WhatsApp</th><td>(42) 99954-9354</td></tr>
             <tr><th>Encarregado (DPO)</th><td><span class="placeholder">[NOME DO ENCARREGADO / DPO]</span> — <span class="placeholder">[E-MAIL DE PRIVACIDADE]</span></td></tr>
           </tbody>
@@ -233,6 +246,11 @@
         <p>Preencha o formulário abaixo. Vamos te responder pelo e-mail informado, normalmente em até 15 dias.</p>
 
         <form class="privacy-request-form" id="dsrForm">
+          <!-- Campo honeypot anti-spam (invisível para humanos, preenchido por robôs) -->
+          <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;" aria-hidden="true">
+            <label for="dsrWebsite">Não preencha este campo</label>
+            <input type="text" id="dsrWebsite" name="b_url" tabindex="-1" autocomplete="off">
+          </div>
           <div class="field-grid field-grid--2">
             <div class="field">
               <label for="dsrTipo">Tipo de solicitação <span aria-hidden="true">*</span></label>
@@ -291,7 +309,7 @@
 
       <section class="privacy-section" id="contato-dpo">
         <h2>12. Contato</h2>
-        <p>Dúvidas sobre esta política ou sobre o tratamento dos seus dados podem ser enviadas para <a href="mailto:contato@paulosouzaimoveis.com.br">contato@paulosouzaimoveis.com.br</a> ou pelo <a href="https://wa.me/5542999549354" target="_blank" rel="noopener">WhatsApp (42) 99954-9354</a>, além do formulário desta página.</p>
+        <p>Dúvidas sobre esta política ou sobre o tratamento dos seus dados podem ser enviadas para <a href="mailto:contato@pscorretordeimoveis.com.br">contato@pscorretordeimoveis.com.br</a> ou pelo <a href="https://wa.me/5542999549354" target="_blank" rel="noopener">WhatsApp (42) 99954-9354</a>, além do formulário desta página.</p>
       </section>
 
     </div>
@@ -322,7 +340,7 @@
       <ul>
         <li><a href="https://wa.me/5542999549354" target="_blank" rel="noopener">WhatsApp (42) 99954-9354</a></li>
         <li><a href="tel:+5542999549354">(42) 99954-9354</a></li>
-        <li><a href="mailto:contato@paulosouzaimoveis.com.br">contato@paulosouzaimoveis.com.br</a></li>
+        <li><a href="mailto:contato@pscorretordeimoveis.com.br">contato@pscorretordeimoveis.com.br</a></li>
         <li>Rua Marechal Mallet, 75D · Ponta Grossa - PR</li>
         <li>Seg a Sex · 9h às 18h</li>
       </ul>
@@ -353,6 +371,35 @@
   dsrForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     dsrMsg.hidden = true;
+
+    // 1. Verificação anti-spam Honeypot (campo armadilha preenchido apenas por robôs)
+    const honeypot = document.getElementById('dsrWebsite');
+    if (honeypot && honeypot.value) {
+      dsrForm.reset();
+      dsrMsg.textContent = 'Solicitação enviada! Vamos te responder pelo e-mail informado em até 15 dias.';
+      dsrMsg.className = 'privacy-request-msg privacy-request-msg--ok';
+      dsrMsg.hidden = false;
+      return;
+    }
+
+    // 2. Proteção contra flood / rate limit no navegador (máximo 3 envios por hora)
+    const RATE_KEY = 'ps_dsr_ratelimit';
+    const now = Date.now();
+    let timestamps = [];
+    try {
+      timestamps = JSON.parse(localStorage.getItem(RATE_KEY) || '[]');
+      if (!Array.isArray(timestamps)) timestamps = [];
+    } catch (_) {
+      timestamps = [];
+    }
+    timestamps = timestamps.filter(t => (now - t) < 3600000); // última 1 hora
+    if (timestamps.length >= 3) {
+      dsrMsg.textContent = 'Limite de solicitações atingido temporariamente por segurança. Por favor, aguarde alguns instantes ou entre em contato pelo WhatsApp (42) 99954-9354.';
+      dsrMsg.className = 'privacy-request-msg privacy-request-msg--err';
+      dsrMsg.hidden = false;
+      return;
+    }
+
     dsrSubmit.disabled = true;
     dsrSubmit.textContent = 'Enviando...';
 
@@ -377,6 +424,11 @@
       dsrMsg.hidden = false;
       return;
     }
+
+    timestamps.push(now);
+    try {
+      localStorage.setItem(RATE_KEY, JSON.stringify(timestamps));
+    } catch (_) {}
 
     dsrForm.reset();
     dsrMsg.textContent = 'Solicitação enviada! Vamos te responder pelo e-mail informado em até 15 dias.';

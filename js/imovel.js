@@ -35,6 +35,41 @@ document.addEventListener('DOMContentLoaded', () => {
     document.title = `${p.titulo} — Paulo Souza Corretor de Imóveis`;
 
     const fotos = Array.isArray(p.fotos) && p.fotos.length ? p.fotos : [p.capa].filter(Boolean);
+    const mainFoto = fotos[0] || 'https://pscorretordeimoveis.com.br/assets/logo.png';
+    const pageUrl = `https://pscorretordeimoveis.com.br/imovel.html?slug=${encodeURIComponent(p.slug)}`;
+    const pageDesc = p.descricao ? p.descricao.slice(0, 160).replace(/\s+/g, ' ').trim() : `${p.titulo} em ${p.bairro}, ${p.cidade}. Valor: ${p.preco_label}.`;
+
+    // Atualiza tags de SEO e Open Graph em tempo de execução
+    const canEl = document.getElementById('canonicalLink'); if (canEl) canEl.href = pageUrl;
+    const ogUrlEl = document.getElementById('ogUrl'); if (ogUrlEl) ogUrlEl.content = pageUrl;
+    const ogTitleEl = document.getElementById('ogTitle'); if (ogTitleEl) ogTitleEl.content = `${p.titulo} — Paulo Souza`;
+    const ogDescEl = document.getElementById('ogDesc'); if (ogDescEl) ogDescEl.content = pageDesc;
+    const ogImgEl = document.getElementById('ogImage'); if (ogImgEl) ogImgEl.content = mainFoto;
+    const twTitleEl = document.getElementById('twTitle'); if (twTitleEl) twTitleEl.content = `${p.titulo} — Paulo Souza`;
+    const twDescEl = document.getElementById('twDesc'); if (twDescEl) twDescEl.content = pageDesc;
+    const twImgEl = document.getElementById('twImage'); if (twImgEl) twImgEl.content = mainFoto;
+
+    // Injeta Schema.org estruturado (RealEstateListing)
+    const existingLd = document.getElementById('imovelJsonLd');
+    if (existingLd) existingLd.remove();
+    const ldScript = document.createElement('script');
+    ldScript.id = 'imovelJsonLd';
+    ldScript.type = 'application/ld+json';
+    ldScript.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "RealEstateListing",
+      "name": p.titulo,
+      "description": p.descricao || pageDesc,
+      "url": pageUrl,
+      "image": fotos,
+      "offers": {
+        "@type": "Offer",
+        "price": p.preco_valor || undefined,
+        "priceCurrency": "BRL",
+        "businessFunction": p.operacao === 'venda' ? "http://purl.org/goodrelations/v1#Sell" : "http://purl.org/goodrelations/v1#LeaseOut"
+      }
+    });
+    document.head.appendChild(ldScript);
     const badges = (p.badges || []).map(b => `<span class="badge badge-success">${escapeHtml(b)}</span>`).join('');
     const tagLabel = p.operacao === 'venda' ? 'Venda' : 'Aluguel';
     const badgeClass = p.operacao === 'venda' ? 'badge-venda' : 'badge-aluguel';

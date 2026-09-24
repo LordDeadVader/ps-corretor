@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /imovel.html
+Allow: /privacidade.html
+Disallow: /admin/
+Disallow: /admin/*
+
+Sitemap: https://paulosouzaimoveis.com.br/sitemap.xml
