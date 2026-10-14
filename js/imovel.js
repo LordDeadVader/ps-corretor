@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="imovel-gallery__count" id="galleryCount">1 / ${fotos.length}</span>` : ''}
         </div>
         ${fotos.length > 1 ? `<div class="imovel-gallery__thumbs" id="galleryThumbs">
-          ${fotos.map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}">`).join('')}
+          ${fotos.map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}"${i === 0 ? '' : ' loading="lazy" decoding="async"'}>`).join('')}
         </div>` : ''}
       </div>
 

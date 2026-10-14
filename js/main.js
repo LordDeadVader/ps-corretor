@@ -28,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function cardTemplate(p) {
     const fotos = Array.isArray(p.fotos) && p.fotos.length ? p.fotos : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=900&auto=format&fit=crop'];
-    const slides = fotos.map(src => `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" loading="lazy">`).join('');
+    // Só a 1ª foto é baixada de imediato; as demais usam data-src e carregam
+    // quando o visitante navega no carrossel (economiza tráfego do Supabase).
+    const slides = fotos.map((src, i) => i === 0
+      ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" loading="lazy" decoding="async">`
+      : `<img data-src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" decoding="async">`).join('');
     const dots = fotos.map((_, i) => `<button class="${i === 0 ? 'is-active' : ''}" data-dot="${i}" aria-label="Foto ${i + 1}"></button>`).join('');
     const tagLabel = p.operacao === 'venda' ? 'Venda' : 'Aluguel';
     const badgeClass = p.operacao === 'venda' ? 'badge-venda' : 'badge-aluguel';
@@ -74,12 +78,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const slideCount = slidesWrap.children.length;
       const dots = carousel.querySelectorAll('.carousel-dots button');
 
+      function loadSlide(i) {
+        const img = slidesWrap.children[(i + slideCount) % slideCount];
+        if (img && img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+      }
+
       function goTo(i) {
         const index = (i + slideCount) % slideCount;
         carousel.dataset.index = index;
+        loadSlide(index);
+        loadSlide(index + 1); // adianta a próxima para a troca não "piscar"
         slidesWrap.style.transform = `translateX(-${index * 100}%)`;
         dots.forEach((d, di) => d.classList.toggle('is-active', di === index));
       }
+
+      // Intenção de navegar (mouse sobre o card ou toque): adianta a 2ª foto
+      const warmUp = () => loadSlide(1);
+      carousel.addEventListener('pointerenter', warmUp, { once: true });
+      carousel.addEventListener('touchstart', warmUp, { once: true, passive: true });
 
       carousel.querySelectorAll('[data-dir]').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -135,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadProperties() {
     const { data, error } = await supabaseClient
       .from('imoveis')
-      .select('*')
+      .select('slug, titulo, operacao, bairro, cidade, preco_label, quartos, banheiros, vagas, area_util, area_terreno, badges, capa, fotos, fotos_destaque')
       .eq('status', 'ativo')
       .order('created_at', { ascending: false });
 
@@ -165,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const images = properties
       .flatMap(p => (p.fotos_destaque && p.fotos_destaque.length) ? p.fotos_destaque : [p.capa || (p.fotos && p.fotos[0])])
-      .filter(Boolean);
+      .filter(Boolean)
+      .slice(0, 6); // limita: cada troca baixa uma foto grande
     if (!images.length) return;
 
     const [imgA, imgB] = heroBg.querySelectorAll('.hero__bg-img');
@@ -175,13 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (images.length < 2) return;
 
     setInterval(() => {
+      if (document.hidden) return; // aba em segundo plano: não baixa nada
       index = (index + 1) % images.length;
       const active = heroBg.querySelector('.hero__bg-img.is-active');
       const next = active === imgA ? imgB : imgA;
       next.src = images[index];
       active.classList.remove('is-active');
       next.classList.add('is-active');
-    }, 6000);
+    }, 8000);
   }
 
   /* ---- Filtro Venda/Aluguel ---- */

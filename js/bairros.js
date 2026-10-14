@@ -43,13 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
 
   fotoInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    fotoPreview.src = URL.createObjectURL(file);
+    const picked = e.target.files[0];
+    if (!picked) return;
+    fotoPreview.src = URL.createObjectURL(picked);
     fotoStatus.textContent = 'Enviando foto...';
 
+    const { file, contentType } = await window.compressImage(picked, { maxSize: 1600 });
     const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
-    const { error } = await supabaseClient.storage.from('bairros').upload(path, file);
+    const { error } = await supabaseClient.storage.from('bairros').upload(path, file, { contentType, cacheControl: '31536000' });
     if (error) {
       fotoStatus.textContent = 'Erro ao enviar: ' + error.message;
       return;

@@ -44,9 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function uploadFiles(fileList) {
     uploadStatus.textContent = `Enviando ${fileList.length} foto(s)...`;
-    for (const file of Array.from(fileList)) {
+    for (const original of Array.from(fileList)) {
+      // Reduz a foto antes de enviar (economiza tráfego do Supabase sem perda visível)
+      const { file, contentType } = await window.compressImage(original, { maxSize: 1600 });
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
-      const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file);
+      const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file, { contentType, cacheControl: '31536000' });
       if (error) {
         uploadStatus.textContent = 'Erro ao enviar uma das fotos: ' + error.message;
         continue;

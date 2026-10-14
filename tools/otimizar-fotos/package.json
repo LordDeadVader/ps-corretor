@@ -1,0 +1,15 @@
+{
+  "name": "otimizar-fotos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Recomprime as fotos já enviadas ao Supabase Storage (mesmo caminho/URL, com backup local dos originais).",
+  "scripts": {
+    "simular": "node otimizar.mjs",
+    "aplicar": "node otimizar.mjs --apply"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "sharp": "^0.33.5"
+  }
+}

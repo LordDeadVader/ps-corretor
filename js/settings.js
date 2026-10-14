@@ -34,15 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   avatarInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const picked = e.target.files[0];
+    if (!picked) return;
 
-    avatarPreview.src = URL.createObjectURL(file);
+    avatarPreview.src = URL.createObjectURL(picked);
     avatarStatus.textContent = 'Enviando foto...';
 
+    // Foto de perfil é pequena na tela: 512px bastam
+    const { file, contentType } = await window.compressImage(picked, { maxSize: 512 });
     const { data: { session } } = await supabaseClient.auth.getSession();
     const path = `${session.user.id}-${Date.now()}.${file.name.split('.').pop()}`;
-    const { error } = await supabaseClient.storage.from('avatares').upload(path, file, { upsert: true });
+    const { error } = await supabaseClient.storage.from('avatares').upload(path, file, { upsert: true, contentType, cacheControl: '31536000' });
 
     if (error) {
       avatarStatus.textContent = 'Erro ao enviar foto: ' + error.message;
