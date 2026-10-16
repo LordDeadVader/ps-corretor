@@ -39,6 +39,56 @@ create table if not exists inquilinos (
 );
 
 -- ---------------------------------------------------------------------
+-- Imóveis (vitrine pública do site)
+-- ---------------------------------------------------------------------
+create table if not exists imoveis (
+  id uuid primary key default gen_random_uuid(),
+  corretor_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  slug text not null unique,
+  titulo text not null,
+  tipo text not null check (tipo in ('casa','apartamento','condominio','comercial','terreno','chacara')),
+  operacao text not null check (operacao in ('venda','aluguel')),
+  bairro text not null,
+  cidade text not null default 'Ponta Grossa',
+  endereco text,
+  preco_valor numeric(14,2),
+  preco_label text not null,
+  quartos int not null default 0,
+  suites int not null default 0,
+  banheiros int not null default 0,
+  vagas int not null default 0,
+  area_util numeric(10,2),
+  area_terreno numeric(10,2),
+  destaques jsonb not null default '[]'::jsonb,
+  badges jsonb not null default '[]'::jsonb,
+  descricao text,
+  status text not null default 'ativo' check (status in ('ativo', 'pendente', 'rascunho')),
+  capa text,
+  fotos jsonb not null default '[]'::jsonb,
+  fotos_destaque jsonb not null default '[]'::jsonb,
+  visualizacoes int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table imoveis enable row level security;
+
+drop policy if exists "qualquer pessoa ve imoveis publicados" on imoveis;
+create policy "qualquer pessoa ve imoveis publicados" on imoveis
+  for select using (status = 'ativo' or auth.uid() = corretor_id);
+
+drop policy if exists "corretor cria imoveis" on imoveis;
+create policy "corretor cria imoveis" on imoveis
+  for insert with check (auth.uid() = corretor_id);
+
+drop policy if exists "corretor atualiza imoveis" on imoveis;
+create policy "corretor atualiza imoveis" on imoveis
+  for update using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
+
+drop policy if exists "corretor exclui imoveis" on imoveis;
+create policy "corretor exclui imoveis" on imoveis
+  for delete using (auth.uid() = corretor_id);
+
+-- ---------------------------------------------------------------------
 -- Contratos de locação
 -- ---------------------------------------------------------------------
 create table if not exists contratos_locacao (
@@ -94,56 +144,6 @@ create policy "corretor gerencia contratos" on contratos_locacao
 drop policy if exists "corretor gerencia recibos" on recibos;
 create policy "corretor gerencia recibos" on recibos
   for all using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
-
--- ---------------------------------------------------------------------
--- Imóveis (vitrine pública do site)
--- ---------------------------------------------------------------------
-create table if not exists imoveis (
-  id uuid primary key default gen_random_uuid(),
-  corretor_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  slug text not null unique,
-  titulo text not null,
-  tipo text not null check (tipo in ('casa','apartamento','condominio','comercial','terreno','chacara')),
-  operacao text not null check (operacao in ('venda','aluguel')),
-  bairro text not null,
-  cidade text not null default 'Ponta Grossa',
-  endereco text,
-  preco_valor numeric(14,2),
-  preco_label text not null,
-  quartos int not null default 0,
-  suites int not null default 0,
-  banheiros int not null default 0,
-  vagas int not null default 0,
-  area_util numeric(10,2),
-  area_terreno numeric(10,2),
-  destaques jsonb not null default '[]'::jsonb,
-  badges jsonb not null default '[]'::jsonb,
-  descricao text,
-  status text not null default 'ativo' check (status in ('ativo', 'pendente', 'rascunho')),
-  capa text,
-  fotos jsonb not null default '[]'::jsonb,
-  fotos_destaque jsonb not null default '[]'::jsonb,
-  visualizacoes int not null default 0,
-  created_at timestamptz not null default now()
-);
-
-alter table imoveis enable row level security;
-
-drop policy if exists "qualquer pessoa ve imoveis publicados" on imoveis;
-create policy "qualquer pessoa ve imoveis publicados" on imoveis
-  for select using (status = 'ativo' or auth.uid() = corretor_id);
-
-drop policy if exists "corretor cria imoveis" on imoveis;
-create policy "corretor cria imoveis" on imoveis
-  for insert with check (auth.uid() = corretor_id);
-
-drop policy if exists "corretor atualiza imoveis" on imoveis;
-create policy "corretor atualiza imoveis" on imoveis
-  for update using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
-
-drop policy if exists "corretor exclui imoveis" on imoveis;
-create policy "corretor exclui imoveis" on imoveis
-  for delete using (auth.uid() = corretor_id);
 
 -- ---------------------------------------------------------------------
 -- Storage: bucket público para fotos de imóveis adicionadas pelo painel
