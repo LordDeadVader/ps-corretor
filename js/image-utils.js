@@ -10,7 +10,7 @@
 // - Converte para WebP (menor, e mantém transparência de PNG).
 // - Se não conseguir comprimir (ou o resultado ficar maior), devolve o original.
 (function () {
-  var SKIP_BELOW_BYTES = 200 * 1024; // já é pequena: não mexe
+  var SKIP_BELOW_BYTES = 120 * 1024; // já é pequena (< 120 KB): não mexe
 
   function canvasToBlob(canvas, type, quality) {
     return new Promise(function (resolve) { canvas.toBlob(resolve, type, quality); });
@@ -32,8 +32,8 @@
   window.compressImage = async function (file, opts) {
     var original = { file: file, contentType: file.type || 'application/octet-stream', compressed: false };
     opts = opts || {};
-    var maxSize = opts.maxSize || 1600;
-    var quality = opts.quality || 0.82;
+    var maxSize = opts.maxSize || 1280;
+    var quality = opts.quality || 0.78;
 
     try {
       if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return original; // gif/svg/heic etc.: mantém

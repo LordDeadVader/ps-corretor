@@ -84,6 +84,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const { data, error } = await supabaseClient.from('imoveis').delete().eq('id', id).select();
     if (error) { alert('Não foi possível excluir: ' + error.message); return; }
     if (!data || !data.length) { alert('Este imóvel pertence a outra conta — você não tem permissão para excluí-lo.'); return; }
+    if (window.removeStorageFiles) {
+      const toRemove = [...(p.fotos || []), p.capa].filter(Boolean);
+      await window.removeStorageFiles(toRemove);
+    }
     loadProperties();
   });
 

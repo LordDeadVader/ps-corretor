@@ -224,6 +224,10 @@ drop policy if exists "corretor autenticado atualiza avatar" on storage.objects;
 create policy "corretor autenticado atualiza avatar" on storage.objects
   for update using (bucket_id = 'avatares' and auth.role() = 'authenticated');
 
+drop policy if exists "corretor autenticado remove avatar" on storage.objects;
+create policy "corretor autenticado remove avatar" on storage.objects
+  for delete using (bucket_id = 'avatares' and auth.role() = 'authenticated');
+
 -- ---------------------------------------------------------------------
 -- Fotos dos bairros (galeria "efeito sanfona" da página inicial)
 -- ---------------------------------------------------------------------
@@ -245,7 +249,7 @@ create policy "qualquer pessoa ve bairros" on bairros_destaque
 
 drop policy if exists "corretor gerencia bairros" on bairros_destaque;
 create policy "corretor gerencia bairros" on bairros_destaque
-  for all using (auth.uid() = corretor_id) with check (auth.uid() = corretor_id);
+  for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
 grant select, insert, update, delete on bairros_destaque to authenticated;
 grant select on bairros_destaque to anon;
@@ -274,3 +278,7 @@ create policy "corretor autenticado envia foto bairro" on storage.objects
 drop policy if exists "corretor autenticado atualiza foto bairro" on storage.objects;
 create policy "corretor autenticado atualiza foto bairro" on storage.objects
   for update using (bucket_id = 'bairros' and auth.role() = 'authenticated');
+
+drop policy if exists "corretor autenticado remove foto bairro" on storage.objects;
+create policy "corretor autenticado remove foto bairro" on storage.objects
+  for delete using (bucket_id = 'bairros' and auth.role() = 'authenticated');

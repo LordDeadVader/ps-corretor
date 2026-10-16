@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const avatarStatus = document.getElementById('avatarStatus');
 
   let avatarUrl = null;
+  let oldAvatarUrl = null;
 
   async function load() {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('telefone').value = perfil.telefone || '';
       if (perfil.foto_url) {
         avatarUrl = perfil.foto_url;
+        oldAvatarUrl = perfil.foto_url;
         avatarPreview.src = perfil.foto_url;
       }
     } else {
@@ -82,6 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
       formError.textContent = 'Erro ao salvar: ' + error.message;
       formError.hidden = false;
       return;
+    }
+
+    if (oldAvatarUrl && oldAvatarUrl !== avatarUrl && window.removeStorageFiles) {
+      await window.removeStorageFiles(oldAvatarUrl);
+      oldAvatarUrl = avatarUrl;
     }
 
     formSuccess.textContent = 'Perfil atualizado com sucesso!';

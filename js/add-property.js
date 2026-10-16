@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(location.search);
   const editId = params.get('id');
   let items = []; // { url, isCover, isDestaque }
+  let originalUrls = []; // fotos salvas originalmente no banco (para limpar as removidas ao salvar)
+  const uploadedInSession = new Set();
   const MAX_DESTAQUES = 3;
 
   function slugify(str) {
@@ -45,8 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function uploadFiles(fileList) {
     uploadStatus.textContent = `Enviando ${fileList.length} foto(s)...`;
     for (const original of Array.from(fileList)) {
-      // Reduz a foto antes de enviar (economiza tráfego do Supabase sem perda visível)
-      const { file, contentType } = await window.compressImage(original, { maxSize: 1600 });
+      // Reduz a foto antes de enviar (WebP 1280px ~80–120 KB: economiza armazenamento e tráfego sem perda visível)
+      const { file, contentType } = await window.compressImage(original, { maxSize: 1280, quality: 0.78 });
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
       const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file, { contentType, cacheControl: '31536000' });
       if (error) {
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
       const { data: pub } = supabaseClient.storage.from('imoveis-fotos').getPublicUrl(path);
+      uploadedInSession.add(pub.publicUrl);
       items.push({ url: pub.publicUrl, isCover: items.length === 0, isDestaque: false });
     }
     uploadStatus.textContent = '';
@@ -71,7 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!btn) return;
     const index = parseInt(btn.dataset.index, 10);
     if (btn.dataset.action === 'remove') {
-      items.splice(index, 1);
+      const [removed] = items.splice(index, 1);
+      if (removed && uploadedInSession.has(removed.url) && window.removeStorageFiles) {
+        uploadedInSession.delete(removed.url);
+        window.removeStorageFiles(removed.url);
+      }
       if (items.length && !items.some(i => i.isCover)) items[0].isCover = true;
     } else if (btn.dataset.action === 'cover') {
       items.forEach((item, i) => { item.isCover = i === index; });
@@ -126,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('badges').value = (p.badges || []).join(', ');
 
     const destaques = p.fotos_destaque || [];
+    originalUrls = [...(p.fotos || [])];
     items = (p.fotos || []).map(url => ({ url, isCover: url === p.capa, isDestaque: destaques.includes(url) }));
     if (items.length && !items.some(i => i.isCover)) items[0].isCover = true;
     renderMedia();
@@ -193,6 +201,11 @@ document.addEventListener('DOMContentLoaded', () => {
       formError.textContent = 'Não foi possível salvar: este imóvel pertence a outra conta e você não tem permissão para editá-lo.';
       formError.hidden = false;
       return;
+    }
+
+    if (window.removeStorageFiles && originalUrls.length) {
+      const removedUrls = originalUrls.filter(u => !fotos.includes(u));
+      if (removedUrls.length) await window.removeStorageFiles(removedUrls);
     }
 
     window.location.href = 'properties.html';

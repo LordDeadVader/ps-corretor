@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fotoStatus = document.getElementById('fotoStatus');
 
   let fotoUrl = null;
+  let oldFotoUrl = null;
   let bairros = [];
 
   function escapeHtml(str) {
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
     formError.hidden = true;
     fotoUrl = record ? record.foto_url : null;
+    oldFotoUrl = fotoUrl;
     document.getElementById('bairroId').value = record ? record.id : '';
     modalTitle.textContent = record ? 'Editar bairro' : 'Novo bairro';
     document.getElementById('nome').value = record ? record.nome : '';
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fotoPreview.src = URL.createObjectURL(picked);
     fotoStatus.textContent = 'Enviando foto...';
 
-    const { file, contentType } = await window.compressImage(picked, { maxSize: 1600 });
+    const { file, contentType } = await window.compressImage(picked, { maxSize: 1200, quality: 0.78 });
     const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
     const { error } = await supabaseClient.storage.from('bairros').upload(path, file, { contentType, cacheControl: '31536000' });
     if (error) {
@@ -107,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const { data, error } = await supabaseClient.from('bairros_destaque').delete().eq('id', id).select();
       if (error) { alert('Não foi possível excluir: ' + error.message); return; }
       if (!data || !data.length) { alert('Este bairro pertence a outra conta — você não tem permissão para excluí-lo.'); return; }
+      if (record.foto_url && window.removeStorageFiles) await window.removeStorageFiles(record.foto_url);
       loadBairros();
     }
   });
@@ -144,6 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
       formError.textContent = 'Não foi possível salvar: este bairro pertence a outra conta e você não tem permissão para editá-lo.';
       formError.hidden = false;
       return;
+    }
+
+    if (oldFotoUrl && oldFotoUrl !== fotoUrl && window.removeStorageFiles) {
+      await window.removeStorageFiles(oldFotoUrl);
     }
 
     closeModal();
