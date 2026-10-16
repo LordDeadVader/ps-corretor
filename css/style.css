@@ -328,6 +328,7 @@
 .footer-bottom p { font-size: var(--fs-xs); color: rgba(255,255,255,0.45); text-align: center; }
 .footer-bottom a { color: rgba(255,255,255,0.65); text-decoration: underline; }
 .footer-bottom a:hover { color: var(--color-gold-400); }
+.footer-bottom strong { color: rgba(255,255,255,0.75); font-weight: 600; }
 
 /* ---------------------------- WHATSAPP FAB ---------------------------- */
 .whatsapp-fab {
