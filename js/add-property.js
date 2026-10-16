@@ -44,11 +44,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('destaqueCount').textContent = `${destaqueCount}/${MAX_DESTAQUES} fotos em destaque selecionadas (usadas na página inicial)`;
   }
 
+  function fmtSize(bytes) {
+    return bytes >= 1024 * 1024
+      ? (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+      : Math.round(bytes / 1024) + ' KB';
+  }
+
   async function uploadFiles(fileList) {
-    uploadStatus.textContent = `Enviando ${fileList.length} foto(s)...`;
-    for (const original of Array.from(fileList)) {
-      // Reduz a foto antes de enviar (WebP 1280px ~80–120 KB: economiza armazenamento e tráfego sem perda visível)
-      const { file, contentType } = await window.compressImage(original, { maxSize: 1280, quality: 0.78 });
+    const list = Array.from(fileList);
+    let idx = 0;
+    let savedBytes = 0;
+    for (const original of list) {
+      idx++;
+      uploadStatus.textContent = `Comprimindo e importando foto ${idx}/${list.length}...`;
+      // Reduz a foto antes de enviar (WebP 1280px ~80–180 KB: economiza armazenamento e tráfego sem perda visível)
+      const { file, contentType } = await window.compressImage(original, { maxSize: 1280, quality: 0.78, maxBytes: 180 * 1024 });
+      if (original.size > file.size) savedBytes += (original.size - file.size);
+      uploadStatus.textContent = `Enviando ${idx}/${list.length} (${fmtSize(original.size)} → ${fmtSize(file.size)})...`;
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
       const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file, { contentType, cacheControl: '31536000' });
       if (error) {
@@ -59,7 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
       uploadedInSession.add(pub.publicUrl);
       items.push({ url: pub.publicUrl, isCover: items.length === 0, isDestaque: false });
     }
-    uploadStatus.textContent = '';
+    uploadStatus.textContent = savedBytes > 0
+      ? `✓ ${list.length} foto(s) importada(s) e otimizada(s) (${fmtSize(savedBytes)} economizados)`
+      : '';
     renderMedia();
   }
 

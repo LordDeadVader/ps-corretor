@@ -34,10 +34,11 @@
     opts = opts || {};
     var maxSize = opts.maxSize || 1280;
     var quality = opts.quality || 0.78;
+    var maxBytes = opts.maxBytes || (180 * 1024); // meta máxima: ~180 KB por foto
 
     try {
       if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return original; // gif/svg/heic etc.: mantém
-      if (file.size <= SKIP_BELOW_BYTES) return original;
+      if (file.size <= SKIP_BELOW_BYTES && file.type === 'image/webp') return original;
 
       var bmp = await loadBitmap(file);
       var w = bmp.width, h = bmp.height;
@@ -57,6 +58,16 @@
         blob = await canvasToBlob(canvas, 'image/jpeg', quality);
         type = 'image/jpeg';
       }
+
+      // Se a foto ainda ficou acima de maxBytes (180 KB), reduz a qualidade progressivamente
+      var q = quality;
+      while (blob && blob.size > maxBytes && q > 0.50) {
+        q = Math.max(0.48, q - 0.12);
+        var nextBlob = await canvasToBlob(canvas, type, q);
+        if (!nextBlob || nextBlob.size >= blob.size) break;
+        blob = nextBlob;
+      }
+
       if (!blob || blob.size >= file.size) return original;
 
       var ext = type === 'image/webp' ? 'webp' : 'jpg';
