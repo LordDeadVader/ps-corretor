@@ -115,14 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <div class="imovel-gallery">
         <div class="imovel-gallery__main">
-          <img id="galleryMain" src="${escapeHtml(fotos[0])}" alt="${escapeHtml(p.titulo)}">
+          <img id="galleryMain" src="${escapeHtml(fotos[0])}" alt="${escapeHtml(p.titulo)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
           ${fotos.length > 1 ? `
           <button class="imovel-gallery__arrow imovel-gallery__arrow--prev" id="galleryPrev" aria-label="Foto anterior">${iconChevron('L')}</button>
           <button class="imovel-gallery__arrow imovel-gallery__arrow--next" id="galleryNext" aria-label="Próxima foto">${iconChevron('R')}</button>
           <span class="imovel-gallery__count" id="galleryCount">1 / ${fotos.length}</span>` : ''}
         </div>
         ${fotos.length > 1 ? `<div class="imovel-gallery__thumbs" id="galleryThumbs">
-          ${fotos.map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}"${i === 0 ? '' : ' loading="lazy" decoding="async"'}>`).join('')}
+          ${fotos.map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}"${i === 0 ? '' : ' loading="lazy" decoding="async"'} onerror="this.onerror=null;this.src='assets/logo.jpeg';">`).join('')}
         </div>` : ''}
       </div>
 
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="imovel-price-card__note">Resposta rápida em horário comercial</p>
           </div>
           <div class="imovel-agent-card">
-            <img src="${escapeHtml(corretorFoto)}" alt="${escapeHtml(corretorNome)}">
+            <img src="${escapeHtml(corretorFoto)}" alt="${escapeHtml(corretorNome)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
             <div><strong>${escapeHtml(corretorNome)}</strong><span>${corretorCreci}</span></div>
           </div>
         </aside>

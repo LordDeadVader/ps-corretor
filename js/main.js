@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Só a 1ª foto é baixada de imediato; as demais usam data-src e carregam
     // quando o visitante navega no carrossel (economiza tráfego do Supabase).
     const slides = fotos.map((src, i) => i === 0
-      ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" loading="lazy" decoding="async">`
-      : `<img data-src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" decoding="async">`).join('');
+      ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='assets/logo.jpeg';">`
+      : `<img data-src="${escapeHtml(src)}" alt="${escapeHtml(p.titulo)}" decoding="async" onerror="this.onerror=null;this.src='assets/logo.jpeg';">`).join('');
     const dots = fotos.map((_, i) => `<button class="${i === 0 ? 'is-active' : ''}" data-dot="${i}" aria-label="Foto ${i + 1}"></button>`).join('');
     const tagLabel = p.operacao === 'venda' ? 'Venda' : 'Aluguel';
     const badgeClass = p.operacao === 'venda' ? 'badge-venda' : 'badge-aluguel';
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const images = properties
       .flatMap(p => (p.fotos_destaque && p.fotos_destaque.length) ? p.fotos_destaque : [p.capa || (p.fotos && p.fotos[0])])
-      .filter(Boolean)
+      .filter(u => u && !u.includes('zbnnwriwfnvcmsduxtti.supabase.co'))
       .slice(0, 6); // limita: cada troca baixa uma foto grande
     if (!images.length) return;
 

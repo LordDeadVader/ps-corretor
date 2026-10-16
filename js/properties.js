@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return `
     <article class="admin-property-card" data-status="${p.status}" data-search="${escapeHtml((p.titulo + ' ' + p.bairro + ' ' + p.cidade).toLowerCase())}">
       <div class="admin-property-card__img">
-        <img src="${escapeHtml(capa)}" alt="">
+        <img src="${escapeHtml(capa)}" alt="" onerror="this.onerror=null;this.src='../assets/logo.jpeg';">
         <span class="status-pill ${statusClass[p.status]} admin-property-card__status">${statusLabel[p.status]}</span>
       </div>
       <div class="admin-property-card__body">

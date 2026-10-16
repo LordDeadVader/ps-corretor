@@ -28,11 +28,20 @@
   }
 
   async function loadPerfil(session) {
-    const { data: perfil } = await supabaseClient.from('corretor_perfil').select('*').eq('id', session.user.id).maybeSingle();
+    let { data: perfil } = await supabaseClient.from('corretor_perfil').select('*').eq('id', session.user.id).maybeSingle();
+    if (!perfil) {
+      const res = await supabaseClient.from('corretor_perfil').select('*').limit(1).maybeSingle();
+      perfil = res.data;
+    }
     if (!perfil) return;
     document.querySelectorAll('[data-user-name]').forEach(el => { el.textContent = perfil.nome; });
     document.querySelectorAll('[data-user-role]').forEach(el => { el.textContent = `Corretor${perfil.creci ? ' · CRECI ' + perfil.creci : ''}`; });
-    document.querySelectorAll('[data-user-avatar]').forEach(el => { if (perfil.foto_url) el.src = perfil.foto_url; });
+    document.querySelectorAll('[data-user-avatar]').forEach(el => {
+      if (perfil.foto_url) {
+        el.onerror = () => { el.onerror = null; el.src = '../assets/logo.jpeg'; };
+        el.src = perfil.foto_url;
+      }
+    });
   }
 
   document.addEventListener('click', (e) => {
