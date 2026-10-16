@@ -149,13 +149,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function loadProperties() {
-    const { data, error } = await supabaseClient
-      .from('imoveis')
-      .select('slug, titulo, operacao, bairro, cidade, preco_label, quartos, banheiros, vagas, area_util, area_terreno, badges, capa, fotos, fotos_destaque')
-      .eq('status', 'ativo')
-      .order('created_at', { ascending: false });
+    let data = null;
+    try {
+      const res = await supabaseClient
+        .from('imoveis')
+        .select('slug, titulo, operacao, bairro, cidade, preco_label, quartos, banheiros, vagas, area_util, area_terreno, badges, capa, fotos, fotos_destaque')
+        .eq('status', 'ativo')
+        .order('created_at', { ascending: false });
+      if (!res.error && res.data && res.data.length) {
+        data = res.data;
+      }
+    } catch (e) {
+      console.warn('Falha ao consultar Supabase, usando fallback local:', e);
+    }
 
-    if (error) {
+    if (!data || !data.length) {
+      try {
+        const fb = await fetch('assets/imoveis-fallback.json');
+        if (fb.ok) data = await fb.json();
+      } catch (_) {}
+    }
+
+    if (!data) {
       grid.innerHTML = `<p class="property-empty">Não foi possível carregar os imóveis no momento. Tente novamente em instantes.</p>`;
       return;
     }

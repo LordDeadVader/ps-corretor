@@ -24,13 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const slug = params.get('slug');
     if (!slug) { renderNotFound(); return; }
 
-    const { data: p, error } = await supabaseClient
-      .from('imoveis')
-      .select('*')
-      .eq('slug', slug)
-      .single();
+    let p = null;
+    try {
+      const res = await supabaseClient
+        .from('imoveis')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (!res.error && res.data) p = res.data;
+    } catch (_) {}
 
-    if (error || !p) { renderNotFound(); return; }
+    if (!p) {
+      try {
+        const fb = await fetch('assets/imoveis-fallback.json');
+        if (fb.ok) {
+          const list = await fb.json();
+          p = (list || []).find(item => item.slug === slug) || null;
+        }
+      } catch (_) {}
+    }
+
+    if (!p) { renderNotFound(); return; }
 
     document.title = `${p.titulo} — Paulo Souza Corretor de Imóveis`;
 
@@ -85,9 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const destaques = (p.destaques || []).map(d => `<li>${iconCheck}<span>${escapeHtml(d)}</span></li>`).join('');
     const whatsappMsg = encodeURIComponent(`Olá! Tenho interesse no imóvel "${p.titulo}" (${p.bairro}, ${p.cidade}). Pode me passar mais informações?`);
 
-    const { data: perfil } = await supabaseClient.from('corretor_perfil').select('*').eq('id', p.corretor_id).maybeSingle();
+    let perfil = null;
+    try {
+      const resPerfil = await supabaseClient.from('corretor_perfil').select('*').eq('id', p.corretor_id).maybeSingle();
+      perfil = resPerfil.data;
+    } catch (_) {}
     const corretorNome = perfil?.nome || 'Paulo Souza';
-    const corretorCreci = perfil?.creci ? `CRECI ${escapeHtml(perfil.creci)}` : 'Corretor de Imóveis';
+    const corretorCreci = perfil?.creci ? `CRECI ${escapeHtml(perfil.creci)}` : 'CRECI F-18971';
     const corretorFoto = perfil?.foto_url || 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=200&auto=format&fit=crop';
 
     page.innerHTML = `
