@@ -50,15 +50,37 @@ document.addEventListener('DOMContentLoaded', () => {
       : Math.round(bytes / 1024) + ' KB';
   }
 
+  const watermarkToggle = document.getElementById('watermarkToggle');
+  const watermarkPos = document.getElementById('watermarkPos');
+  if (watermarkPos) {
+    const savedPos = localStorage.getItem('ps_watermark_pos');
+    if (savedPos && ['center', 'bottom-right', 'bottom-left'].includes(savedPos)) {
+      watermarkPos.value = savedPos;
+    }
+    watermarkPos.addEventListener('change', () => {
+      localStorage.setItem('ps_watermark_pos', watermarkPos.value);
+    });
+  }
+
   async function uploadFiles(fileList) {
     const list = Array.from(fileList);
     let idx = 0;
     let savedBytes = 0;
+    const useWm = !watermarkToggle || watermarkToggle.checked;
+    const wmPosition = (watermarkPos && watermarkPos.value) || 'center';
+
     for (const original of list) {
       idx++;
-      uploadStatus.textContent = `Comprimindo e importando foto ${idx}/${list.length}...`;
-      // Reduz a foto antes de enviar (WebP 1280px ~80–180 KB: economiza armazenamento e tráfego sem perda visível)
-      const { file, contentType } = await window.compressImage(original, { maxSize: 1280, quality: 0.78, maxBytes: 180 * 1024 });
+      uploadStatus.textContent = useWm
+        ? `Aplicando marca d'água (80%) e comprimindo foto ${idx}/${list.length}...`
+        : `Comprimindo e importando foto ${idx}/${list.length}...`;
+      // Reduz a foto antes de enviar (WebP 1280px ~80–180 KB) e aplica a marca d'água em PNG cinza com 80% de opacidade
+      const { file, contentType } = await window.compressImage(original, {
+        maxSize: 1280,
+        quality: 0.78,
+        maxBytes: 180 * 1024,
+        watermark: useWm ? { opacity: 0.80, position: wmPosition } : false
+      });
       if (original.size > file.size) savedBytes += (original.size - file.size);
       uploadStatus.textContent = `Enviando ${idx}/${list.length} (${fmtSize(original.size)} → ${fmtSize(file.size)})...`;
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
@@ -72,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       items.push({ url: pub.publicUrl, isCover: items.length === 0, isDestaque: false });
     }
     uploadStatus.textContent = savedBytes > 0
-      ? `✓ ${list.length} foto(s) importada(s) e otimizada(s) (${fmtSize(savedBytes)} economizados)`
-      : '';
+      ? `✓ ${list.length} foto(s) importada(s)${useWm ? " com marca d'água" : ''} (${fmtSize(savedBytes)} economizados)`
+      : (list.length ? `✓ ${list.length} foto(s) importada(s)${useWm ? " com marca d'água" : ''}` : '');
     renderMedia();
   }
 

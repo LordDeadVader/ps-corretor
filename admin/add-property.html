@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/tokens.css?v=20261020a">
-<link rel="stylesheet" href="../css/admin.css?v=20261020a">
-<script src="../js/theme.js?v=20261020a"></script>
+<link rel="stylesheet" href="../css/tokens.css?v=20261020b">
+<link rel="stylesheet" href="../css/admin.css?v=20261020b">
+<script src="../js/theme.js?v=20261020b"></script>
 </head>
 <body class="admin-body">
 <div class="admin-shell">
@@ -266,12 +266,27 @@
             <div><h3>Fotos</h3><p>Envie as fotos, escolha a capa e até 3 fotos em destaque (usadas no banner rotativo da página inicial)</p></div>
           </div>
           <div class="form-block__body">
+            <div class="watermark-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:10px 14px;margin-bottom:12px;background:var(--color-bg-alt, #f8fafc);border:1px solid var(--color-border, #e2e8f0);border-radius:10px;">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.88rem;font-weight:500;color:var(--color-text, #1e293b);margin:0;">
+                <input type="checkbox" id="watermarkToggle" checked style="width:16px;height:16px;accent-color:var(--color-primary, #1b4d89);cursor:pointer;">
+                <img src="../assets/watermark-logo.png?v=20261020b" alt="Marca d'água" style="height:24px;width:auto;opacity:0.8;">
+                <span>Aplicar marca d'água automática <strong>(PNG cinza · 80% opacidade)</strong></span>
+              </label>
+              <div style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--color-text-muted, #64748b);">
+                <label for="watermarkPos" style="margin:0;font-weight:500;">Posição:</label>
+                <select id="watermarkPos" style="padding:4px 8px;border:1px solid var(--color-border, #cbd5e1);border-radius:6px;background:#fff;font-size:0.82rem;color:var(--color-text, #1e293b);">
+                  <option value="center" selected>Centro da foto</option>
+                  <option value="bottom-right">Canto inferior direito</option>
+                  <option value="bottom-left">Canto inferior esquerdo</option>
+                </select>
+              </div>
+            </div>
             <label class="dropzone" id="dropzone" for="fileInput">
               <div class="dropzone__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
               </div>
               <h4 id="dropzoneLabel">Arraste e solte fotos aqui</h4>
-              <p>ou clique para selecionar arquivos · JPG ou PNG</p>
+              <p>ou clique para selecionar arquivos · JPG ou PNG (compressão + marca d'água automática)</p>
               <input type="file" id="fileInput" multiple accept="image/*">
             </label>
             <p class="hint" id="uploadStatus" style="margin-top: var(--space-2);"></p>
@@ -293,11 +308,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase-config.js?v=20261020a"></script>
-<script src="../js/auth-guard.js?v=20261020a"></script>
-<script src="../js/admin.js?v=20261020a"></script>
-<script src="../js/image-utils.js?v=20261020a"></script>
-<script src="../js/add-property.js?v=20261020a"></script>
+<script src="../js/supabase-config.js?v=20261020b"></script>
+<script src="../js/auth-guard.js?v=20261020b"></script>
+<script src="../js/admin.js?v=20261020b"></script>
+<script src="../js/image-utils.js?v=20261020b"></script>
+<script src="../js/add-property.js?v=20261020b"></script>
 </body>
 </html>
 
