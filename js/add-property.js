@@ -78,19 +78,26 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `Aplicando marca d'água (80%) e comprimindo foto ${idx}/${list.length}...`
         : `Comprimindo e importando foto ${idx}/${list.length}...`;
       // Reduz a foto antes de enviar (WebP 1280px ~80–180 KB) e aplica a marca d'água em PNG cinza com 80% de opacidade
-      const { file, contentType, watermarked } = await window.compressImage(original, {
-        maxSize: 1280,
-        quality: 0.78,
-        maxBytes: 180 * 1024,
-        watermark: useWm ? { opacity: 0.80, position: wmPosition } : false
-      });
+      let processed;
+      try {
+        processed = await window.compressImage(original, {
+          maxSize: 1280,
+          quality: 0.78,
+          maxBytes: 180 * 1024,
+          watermark: useWm ? { opacity: 0.80, position: wmPosition } : false
+        });
+      } catch (err) {
+        uploadStatus.textContent = (err && err.message) || 'Arquivo bloqueado: envie apenas fotos válidas (JPG, PNG ou WebP).';
+        continue;
+      }
+      const { file, contentType, watermarked } = processed;
       if (original.size > file.size) savedBytes += (original.size - file.size);
       uploadStatus.textContent = `Enviando ${idx}/${list.length} (${fmtSize(original.size)} → ${fmtSize(file.size)})...`;
       const wmSuffix = watermarked ? '-wm' : '';
       const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}${wmSuffix}.${file.name.split('.').pop()}`;
       const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file, { contentType, cacheControl: '31536000' });
       if (error) {
-        uploadStatus.textContent = 'Erro ao enviar uma das fotos: ' + error.message;
+        uploadStatus.textContent = 'Não foi possível enviar a foto selecionada. Verifique o formato e tente novamente.';
         continue;
       }
       const { data: pub } = supabaseClient.storage.from('imoveis-fotos').getPublicUrl(path);

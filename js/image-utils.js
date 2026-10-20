@@ -100,7 +100,20 @@
   }
 
   window.compressImage = async function (file, opts) {
-    var original = { file: file, contentType: file.type || 'application/octet-stream', compressed: false };
+    if (!file || typeof file.name !== 'string') {
+      throw new Error('Arquivo inválido.');
+    }
+    var extCheck = (file.name.split('.').pop() || '').toLowerCase();
+    var validMime = /^image\/(jpeg|jpg|png|webp)$/i.test(file.type || '');
+    var validExt = /^(jpg|jpeg|png|webp)$/i.test(extCheck);
+    if (!validMime || !validExt) {
+      throw new Error('Formato de arquivo bloqueado por segurança. Envie apenas imagens JPG, PNG ou WebP.');
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      throw new Error('A imagem excede o tamanho máximo permitido (20 MB).');
+    }
+
+    var original = { file: file, contentType: file.type || 'image/jpeg', compressed: false };
     opts = opts || {};
     var maxSize = opts.maxSize || 1280;
     var quality = opts.quality || 0.78;
@@ -108,7 +121,6 @@
     var useWatermark = !!opts.watermark;
 
     try {
-      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return original; // gif/svg/heic etc.: mantém
       if (!useWatermark && file.size <= SKIP_BELOW_BYTES && file.type === 'image/webp') return original;
 
       var bmp = await loadBitmap(file);
@@ -157,8 +169,8 @@
         watermarked: watermarkApplied
       };
     } catch (err) {
-      console.warn('Não foi possível processar/comprimir a imagem; enviando o original.', err);
-      return original;
+      console.warn('Imagem rejeitada ou corrompida:', err);
+      throw new Error('O arquivo enviado não é uma imagem válida ou está corrompido.');
     }
   };
 })();

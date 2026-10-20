@@ -47,6 +47,13 @@
       return;
     }
     if (session) {
+      // Valida o JWT diretamente no servidor Supabase Auth (impede reutilização de token revogado/antigo)
+      const { data: userCheck, error: userErr } = await supabaseClient.auth.getUser();
+      if (userErr || !userCheck || !userCheck.user) {
+        await supabaseClient.auth.signOut({ scope: 'local' });
+        if (!isLoginPage) window.location.replace('login.html');
+        return;
+      }
       document.documentElement.classList.add('is-authenticated');
       await loadIdentityAndPerfil(session);
     }

@@ -398,3 +398,76 @@ $$;
 grant execute on function public.verificar_bloqueio_login(text) to anon, authenticated;
 grant execute on function public.registrar_tentativa_login(text, boolean) to anon, authenticated;
 
+-- ============================================================
+-- 11. BLINDAGEM AVANÇADA (STORAGE, IDs, PREÇOS E ANTI-SPAM/XSS)
+-- ============================================================
+
+-- 11.1 Restrição de MIME types (apenas JPEG, PNG, WEBP) e limite de 5 MB nos buckets
+update storage.buckets
+   set allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp'],
+       file_size_limit = 5242880
+ where id in ('imoveis-fotos', 'bairros', 'avatares');
+
+-- 11.2 Bloqueio de alteração de ID (Primary Key Tampering)
+create or replace function public.prevent_id_tampering()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if NEW.id is distinct from OLD.id then
+    raise exception 'Operação negada: o identificador único (ID) do registro não pode ser alterado.';
+  end if;
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_prevent_id_tampering_imoveis on public.imoveis;
+create trigger trg_prevent_id_tampering_imoveis
+before update on public.imoveis
+for each row execute function public.prevent_id_tampering();
+
+-- 11.3 Validação de integridade de preços (bloqueia valores negativos ou absurdos)
+alter table public.imoveis drop constraint if exists chk_imoveis_preco_valido;
+alter table public.imoveis add constraint chk_imoveis_preco_valido
+  check (preco >= 0 and preco <= 999999999);
+
+-- 11.4 Blindagem da tabela pública LGPD (Rate-limit, tamanho máximo e bloqueio de HTML/JS)
+create or replace function public.guard_solicitacoes_titulares()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_recent_count int;
+begin
+  select count(*) into v_recent_count
+    from public.solicitacoes_titulares
+   where created_at > now() - interval '15 minutes';
+
+  if v_recent_count >= 5 then
+    raise exception 'Muitas solicitações recentes. Aguarde alguns minutos antes de tentar novamente.';
+  end if;
+
+  if length(coalesce(NEW.nome, '')) > 120
+     or length(coalesce(NEW.contato, '')) > 120
+     or length(coalesce(NEW.detalhes, '')) > 1000 then
+    raise exception 'Dados excedem o limite máximo de caracteres permitido.';
+  end if;
+
+  if coalesce(NEW.nome, '') ~* '<[a-z!/]|javascript:|onerror=|onload='
+     or coalesce(NEW.contato, '') ~* '<[a-z!/]|javascript:|onerror=|onload='
+     or coalesce(NEW.detalhes, '') ~* '<script|<iframe|javascript:|onerror=|onload=' then
+    raise exception 'Conteúdo inválido detectado.';
+  end if;
+
+  NEW.status := 'recebida';
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_guard_solicitacoes_titulares on public.solicitacoes_titulares;
+create trigger trg_guard_solicitacoes_titulares
+before insert on public.solicitacoes_titulares
+for each row execute function public.guard_solicitacoes_titulares();
