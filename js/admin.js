@@ -521,17 +521,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getAliveMonthContext() {
     const now = new Date();
-    const year = now.getFullYear();
-    const monthIdx = now.getMonth(); // 0..11
+    let year = now.getFullYear();
+    let monthIdx = now.getMonth(); // 0..11
     const day = now.getDate();
+
+    // Site criado/publicado em 20–23/08/2026 com 2 meses de suporte e edição grátis (Setembro e Outubro/2026).
+    // Portanto, enquanto estivermos em Outubro/2026, a próxima fatura vigente é a 1ª mensalidade em 10/11/2026.
+    const inFreeSupportPeriod = (year === 2026 && monthIdx <= 9);
+    if (inFreeSupportPeriod) {
+      monthIdx = 10; // Novembro (0-indexed = 10)
+    }
+
     const monthNum = String(monthIdx + 1).padStart(2, '0');
     const monthName = MONTHS_PT[monthIdx];
     const monthYearLabel = `${monthName}/${year}`;
     const storageKey = `alive_maint_paid_${year}_${monthNum}`;
     let isPaid = false;
     try { isPaid = localStorage.getItem(storageKey) === '1'; } catch (_) {}
-    const isAfterDue = day > ALIVE_MAINT.dueDay;
-    return { year, monthIdx, day, monthNum, monthName, monthYearLabel, storageKey, isPaid, isAfterDue };
+    const isAfterDue = !inFreeSupportPeriod && (day > ALIVE_MAINT.dueDay);
+    return { year, monthIdx, day, monthNum, monthName, monthYearLabel, storageKey, isPaid, isAfterDue, inFreeSupportPeriod };
   }
 
   // Gerador local ISO/IEC 18004 QR Code (Versão 6, Nível L, 41x41) em SVG/Canvas sem rede externa
@@ -683,27 +691,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildAliveHistoryItemsHtml() {
     const ctx = getAliveMonthContext();
     const entries = [
-      { label: 'Outubro/2026', value: 'R$ 65,00', status: 'Concluído', open: false },
-      { label: 'Setembro/2026', value: 'R$ 65,00', status: 'Concluído', open: false },
-      { label: 'Implementação do Site', value: 'R$ 320,00', status: 'Pago', open: false }
-    ];
-
-    // Se estivermos em um mês diferente ou o mês vigente não estiver na lista estática, sincroniza o status atual
-    const currentIdx = entries.findIndex(e => e.label.toLowerCase() === ctx.monthYearLabel.toLowerCase());
-    if (currentIdx === -1) {
-      entries.unshift({
-        label: ctx.monthYearLabel,
+      {
+        label: `${ctx.monthYearLabel} (1ª mensalidade)`,
         value: ALIVE_MAINT.amountLabel,
-        status: ctx.isPaid ? 'Concluído' : (ctx.isAfterDue ? 'Em aberto' : `Vence 10/${ctx.monthNum}`),
+        status: ctx.isPaid ? 'Concluído' : (ctx.isAfterDue ? 'Em aberto' : `Vencimento 10/${ctx.monthNum}`),
         open: !ctx.isPaid && ctx.isAfterDue
-      });
-    } else if (!ctx.isPaid && ctx.isAfterDue) {
-      entries[currentIdx].status = 'Em aberto';
-      entries[currentIdx].open = true;
-    } else if (ctx.isPaid) {
-      entries[currentIdx].status = 'Concluído';
-      entries[currentIdx].open = false;
-    }
+      },
+      { label: 'Outubro/2026 (2º mês de suporte/edição grátis)', value: 'Isento (Cortesia)', status: 'Concluído', open: false },
+      { label: 'Setembro/2026 (1º mês de suporte/edição grátis)', value: 'Isento (Cortesia)', status: 'Concluído', open: false },
+      { label: 'Implementação do Site (23/08/2026)', value: 'R$ 320,00', status: 'Pago', open: false }
+    ];
 
     return entries.map(item => `
       <li>
@@ -745,7 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="cleanup-modal__body">
           <div class="alive-pix-summary">
             <p class="alive-pix-summary__title">Manutenção do Site — ${escapeHtml(ctx.monthYearLabel)} • ${ALIVE_MAINT.amountLabel}</p>
-            <p class="alive-pix-summary__sub">Beneficiário: ${escapeHtml(ALIVE_MAINT.beneficiary)} · Vencimento todo dia 10</p>
+            <p class="alive-pix-summary__sub">Beneficiário: ${escapeHtml(ALIVE_MAINT.beneficiary)} · Vencimento dia 10/${ctx.monthNum}</p>
           </div>
 
           <div class="alive-pix-qr-wrap">
@@ -837,7 +834,9 @@ document.addEventListener('DOMContentLoaded', () => {
         subText = `Vencimento dia 10/${ctx.monthNum} — ${ALIVE_MAINT.amountLabel} · Beneficiário: ${ALIVE_MAINT.beneficiary}`;
       } else {
         statusBadgeText = `Vencimento em 10/${ctx.monthNum} — ${ALIVE_MAINT.amountLabel}`;
-        subText = `Assinatura mensal de hospedagem, servidor e suporte técnico (${ctx.monthYearLabel}).`;
+        subText = ctx.inFreeSupportPeriod
+          ? `2 meses de suporte/edição grátis (23/08 a 23/10) concluídos · 1ª mensalidade em 10/${ctx.monthNum}/${ctx.year}.`
+          : `Assinatura mensal de hospedagem, servidor e suporte técnico (${ctx.monthYearLabel}).`;
       }
 
       banner.innerHTML = `
