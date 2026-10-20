@@ -75,10 +75,10 @@
 
     if (isAdmin) {
       document.querySelectorAll('[data-user-name]').forEach(el => {
-        el.innerHTML = `Davi Henrique <span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;font-size:9px;font-weight:700;background:var(--color-gold-500,#d4a853);color:#0a1628;vertical-align:middle;">ADMIN</span>`;
+        el.innerHTML = `Logado como Admin <span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;font-size:9px;font-weight:700;background:var(--color-gold-500,#d4a853);color:#0a1628;vertical-align:middle;">SUPORTE</span>`;
       });
       document.querySelectorAll('[data-user-role]').forEach(el => {
-        el.textContent = `Administrador · ${email}`;
+        el.textContent = email;
       });
       document.querySelectorAll('[data-user-avatar]').forEach(el => {
         el.src = '../assets/logo-icon.png';
@@ -86,14 +86,6 @@
         el.style.background = '#0a1628';
         el.style.padding = '3px';
       });
-
-      // Atualiza subtítulo do Dashboard quando logado como Admin
-      if (location.pathname.endsWith('dashboard.html')) {
-        const topSub = document.querySelector('.admin-topbar__title p');
-        if (topSub) {
-          topSub.innerHTML = `Conectado como <strong>Administrador Geral (Alive)</strong> · Conta: <code>${email}</code> · Visão global da imobiliária.`;
-        }
-      }
       return;
     }
 

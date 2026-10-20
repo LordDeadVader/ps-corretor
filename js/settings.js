@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
         activeSessionAvatar.style.objectFit = 'contain';
         activeSessionAvatar.style.padding = '4px';
         activeSessionTitle.innerHTML = `
-          <span>Davi Henrique</span>
-          <span class="account-role-pill account-role-pill--admin">★ Administrador Geral · Conectado</span>
+          <span>Você está logado como Admin (Suporte)</span>
+          <span class="account-role-pill account-role-pill--admin">● Sessão Privada Admin</span>
         `;
-        activeSessionDesc.innerHTML = `Conectado na conta de administração <code>${escapeHtml(email)}</code> (Alive Agency) · Acesso geral a todos os corretores e configurações.`;
+        activeSessionDesc.innerHTML = `Conta conectada: <code>${escapeHtml(email)}</code> · <em>Essa informação aparece somente para você. O corretor não vê seu login nem na lista abaixo.</em>`;
       } else {
         activeSessionBox.classList.add('is-broker');
         activeSessionAvatar.src = brokerPhoto;
@@ -57,13 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>${escapeHtml(brokerName)}</span>
           <span class="account-role-pill account-role-pill--online">● Conectado nesta conta</span>
         `;
-        activeSessionDesc.innerHTML = `Sessão ativa como Corretor Titular · Login conectado: <code>${escapeHtml(email)}</code> · CRECI ${escapeHtml(brokerCreci)}`;
+        activeSessionDesc.innerHTML = `Sessão ativa · Conta conectada: <code>${escapeHtml(email)}</code> · CRECI ${escapeHtml(brokerCreci)}`;
       }
     }
 
     if (brokersRoster) {
       const titularBadge = isAdminUser
-        ? `<span class="account-role-pill account-role-pill--online">● Corretor Titular Ativo</span>`
+        ? `<span class="account-role-pill account-role-pill--online">● Corretor Principal</span>`
         : `<span class="account-role-pill account-role-pill--online">● Conectado agora (${escapeHtml(email)})</span>`;
 
       brokersRoster.innerHTML = `
@@ -79,13 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
           <div style="font-size:var(--fs-xs);color:var(--color-text-tertiary);font-weight:600;">
-            Responsável pelos imóveis ativos
+            Corretor Titular
           </div>
         </div>
 
         <div class="broker-empty-slot">
           <strong>Outros corretores cadastrados (0)</strong>
-          <span>Nenhum outro corretor vinculado no momento. Espaço reservado para futuros corretores associados da imobiliária.</span>
+          <span>Nenhum outro corretor cadastrado no momento. Espaço reservado para futuros corretores da imobiliária.</span>
         </div>
       `;
     }
@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('emailLogin').value = isAdminUser
-      ? `${session.user.email} (Administrador Geral)`
-      : `${session.user.email} (Corretor Titular)`;
+      ? `${session.user.email} (Visível apenas p/ você — Suporte Admin)`
+      : session.user.email;
 
     // Carrega sempre o perfil principal do corretor titular (Paulo Souza)
     let { data: perfil } = await supabaseClient
