@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </nav>
 
       <div class="imovel-gallery">
-        <div class="imovel-gallery__main">
+        <div class="imovel-gallery__main${/-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(fotos[0] || '') ? ' has-burned-wm' : ''}">
           <img id="galleryMain" src="${escapeHtml(fotos[0])}" alt="${escapeHtml(p.titulo)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
           ${fotos.length > 1 ? `
           <button class="imovel-gallery__arrow imovel-gallery__arrow--prev" id="galleryPrev" aria-label="Foto anterior">${iconChevron('L')}</button>
@@ -175,6 +175,9 @@ document.addEventListener('DOMContentLoaded', () => {
       function goTo(i) {
         index = (i + fotos.length) % fotos.length;
         mainImg.src = fotos[index];
+        if (mainImg.parentElement) {
+          mainImg.parentElement.classList.toggle('has-burned-wm', /-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(fotos[index] || ''));
+        }
         countEl.textContent = `${index + 1} / ${fotos.length}`;
         thumbs.forEach((t, ti) => t.classList.toggle('is-active', ti === index));
       }

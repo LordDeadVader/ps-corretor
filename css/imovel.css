@@ -13,11 +13,21 @@
 /* ---- Galeria ---- */
 .imovel-gallery { border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-md); background: var(--color-surface-alt); }
 .imovel-gallery__main { position: relative; aspect-ratio: 16/10; background: var(--color-surface-alt); }
+.imovel-gallery__main:not(.has-burned-wm)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/watermark-logo.png?v=20261020c") center center / 32% auto no-repeat;
+  opacity: 0.80;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.28));
+}
 .imovel-gallery__main img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .imovel-gallery__arrow {
   position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%;
   background: rgba(10,26,51,0.65); color: #fff; border: none; display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px); z-index: 2;
 }
 .imovel-gallery__arrow:hover { background: rgba(10,26,51,0.85); }
 .imovel-gallery__arrow svg { width: 18px; height: 18px; }

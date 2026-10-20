@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderMedia() {
     const destaqueCount = items.filter(i => i.isDestaque).length;
-    mediaGrid.innerHTML = items.map((item, i) => `
-      <div class="media-item ${item.isCover ? 'is-cover' : ''} ${item.isDestaque ? 'is-destaque' : ''}" data-index="${i}">
+    mediaGrid.innerHTML = items.map((item, i) => {
+      const hasBurned = /-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(item.url || '');
+      return `
+      <div class="media-item ${item.isCover ? 'is-cover' : ''} ${item.isDestaque ? 'is-destaque' : ''} ${hasBurned ? 'has-burned-wm' : ''}" data-index="${i}">
         <span class="media-item__cover-badge">Capa</span>
         <span class="media-item__destaque-badge">Destaque</span>
         <img src="${adminImgSrc(item.url)}" alt="Foto do imóvel">
@@ -40,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     document.getElementById('destaqueCount').textContent = `${destaqueCount}/${MAX_DESTAQUES} fotos em destaque selecionadas (usadas na página inicial)`;
   }
 
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `Aplicando marca d'água (80%) e comprimindo foto ${idx}/${list.length}...`
         : `Comprimindo e importando foto ${idx}/${list.length}...`;
       // Reduz a foto antes de enviar (WebP 1280px ~80–180 KB) e aplica a marca d'água em PNG cinza com 80% de opacidade
-      const { file, contentType } = await window.compressImage(original, {
+      const { file, contentType, watermarked } = await window.compressImage(original, {
         maxSize: 1280,
         quality: 0.78,
         maxBytes: 180 * 1024,
@@ -83,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (original.size > file.size) savedBytes += (original.size - file.size);
       uploadStatus.textContent = `Enviando ${idx}/${list.length} (${fmtSize(original.size)} → ${fmtSize(file.size)})...`;
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}.${file.name.split('.').pop()}`;
+      const wmSuffix = watermarked ? '-wm' : '';
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${slugify(file.name.replace(/\.[^.]+$/, ''))}${wmSuffix}.${file.name.split('.').pop()}`;
       const { error } = await supabaseClient.storage.from('imoveis-fotos').upload(path, file, { contentType, cacheControl: '31536000' });
       if (error) {
         uploadStatus.textContent = 'Erro ao enviar uma das fotos: ' + error.message;

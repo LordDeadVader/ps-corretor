@@ -45,10 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (area) metaParts.push(`<span>${iconArea} ${area} m²</span>`);
 
     const badges = (p.badges || []).map(b => `<span class="property-card__badge">${escapeHtml(b)}</span>`).join('');
+    const firstBurned = /-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(fotos[0] || '');
 
     return `
     <article class="property-card" data-tag="${p.operacao}" data-bairro="${escapeHtml(p.bairro)}" data-cidade="${escapeHtml(p.cidade)}">
-      <a class="property-card__media" data-carousel data-index="0" href="imovel.html?slug=${encodeURIComponent(p.slug)}">
+      <a class="property-card__media${firstBurned ? ' has-burned-wm' : ''}" data-carousel data-index="0" href="imovel.html?slug=${encodeURIComponent(p.slug)}">
         <div class="property-card__slides">${slides}</div>
         <span class="badge ${badgeClass} property-card__tag">${tagLabel}</span>
         ${badges ? `<div class="property-card__badges">${badges}</div>` : ''}
@@ -88,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         carousel.dataset.index = index;
         loadSlide(index);
         loadSlide(index + 1); // adianta a próxima para a troca não "piscar"
+        const activeImg = slidesWrap.children[index];
+        const activeUrl = activeImg ? (activeImg.getAttribute('src') || activeImg.dataset.src || '') : '';
+        carousel.classList.toggle('has-burned-wm', /-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(activeUrl));
         slidesWrap.style.transform = `translateX(-${index * 100}%)`;
         dots.forEach((d, di) => d.classList.toggle('is-active', di === index));
       }
