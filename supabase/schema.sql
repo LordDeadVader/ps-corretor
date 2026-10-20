@@ -282,3 +282,23 @@ create policy "corretor autenticado atualiza foto bairro" on storage.objects
 drop policy if exists "corretor autenticado remove foto bairro" on storage.objects;
 create policy "corretor autenticado remove foto bairro" on storage.objects
   for delete using (bucket_id = 'bairros' and auth.role() = 'authenticated');
+
+-- ---------------------------------------------------------------------
+-- Medidor de capacidade do servidor (Storage + Banco de Dados) para o CMS
+-- ---------------------------------------------------------------------
+create or replace function public.get_storage_usage()
+returns jsonb
+language sql
+security definer
+set search_path = public, storage
+as $$
+  select jsonb_build_object(
+    'storage_bytes', coalesce((select sum((metadata->>'size')::bigint) from storage.objects), 0),
+    'storage_files', coalesce((select count(*) from storage.objects), 0),
+    'storage_limit_bytes', 1073741824::bigint,
+    'db_bytes', pg_database_size(current_database()),
+    'db_limit_bytes', 524288000::bigint
+  );
+$$;
+
+grant execute on function public.get_storage_usage() to authenticated;
