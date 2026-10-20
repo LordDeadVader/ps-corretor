@@ -1,7 +1,17 @@
-// PS Corretor de Imóveis — Proteção de rotas do painel
+// PS Corretor de Imóveis — Proteção de rotas do painel e identificação de Conta/Admin
 // Inclua depois de supabase-config.js em toda página do /admin que exigir login.
 (function () {
   const isLoginPage = location.pathname.endsWith('/login.html') || location.pathname.endsWith('/login');
+  const ADMIN_EMAILS = ['davihenriqueded@gmail.com'];
+  const PRIMARY_BROKER_ID = 'e08931fd-1c79-4d86-9e19-b4b22c1174d4';
+
+  window.PS_AUTH_CONFIG = {
+    ADMIN_EMAILS,
+    PRIMARY_BROKER_ID,
+    isAdminEmail(email) {
+      return ADMIN_EMAILS.includes(String(email || '').trim().toLowerCase());
+    }
+  };
 
   // Verificação síncrona imediata antes de qualquer renderização
   if (!isLoginPage) {
@@ -38,32 +48,77 @@
     }
     if (session) {
       document.documentElement.classList.add('is-authenticated');
-      applyUserInfo(session);
-      loadPerfil(session);
+      await loadIdentityAndPerfil(session);
     }
   }
 
-  function applyUserInfo(session) {
-    const nameEl = document.querySelector('[data-user-name]');
-    const email = session.user.email || '';
-    if (nameEl) nameEl.textContent = email.split('@')[0];
-  }
+  async function loadIdentityAndPerfil(session) {
+    const email = (session.user.email || '').trim().toLowerCase();
+    const isAdmin = window.PS_AUTH_CONFIG.isAdminEmail(email);
+    window.isSuperAdmin = isAdmin;
 
-  async function loadPerfil(session) {
-    let { data: perfil } = await supabaseClient.from('corretor_perfil').select('*').eq('id', session.user.id).maybeSingle();
-    if (!perfil) {
-      const res = await supabaseClient.from('corretor_perfil').select('*').limit(1).maybeSingle();
-      perfil = res.data;
+    // Busca sempre o perfil principal do corretor titular (Paulo Souza)
+    let { data: brokerPerfil } = await supabaseClient
+      .from('corretor_perfil')
+      .select('*')
+      .eq('id', PRIMARY_BROKER_ID)
+      .maybeSingle();
+
+    if (!brokerPerfil) {
+      const { data: list } = await supabaseClient
+        .from('corretor_perfil')
+        .select('*')
+        .neq('creci', 'ADMIN')
+        .limit(1);
+      brokerPerfil = list && list[0] ? list[0] : null;
     }
-    if (!perfil) return;
-    document.querySelectorAll('[data-user-name]').forEach(el => { el.textContent = perfil.nome; });
-    document.querySelectorAll('[data-user-role]').forEach(el => { el.textContent = `Corretor${perfil.creci ? ' · CRECI ' + perfil.creci : ''}`; });
-    document.querySelectorAll('[data-user-avatar]').forEach(el => {
-      if (perfil.foto_url) {
-        el.onerror = () => { el.onerror = null; el.src = '../assets/logo.jpeg'; };
-        el.src = perfil.foto_url;
+
+    if (isAdmin) {
+      document.querySelectorAll('[data-user-name]').forEach(el => {
+        el.innerHTML = `Davi Henrique <span style="display:inline-block;margin-left:4px;padding:1px 6px;border-radius:999px;font-size:9px;font-weight:700;background:var(--color-gold-500,#d4a853);color:#0a1628;vertical-align:middle;">ADMIN</span>`;
+      });
+      document.querySelectorAll('[data-user-role]').forEach(el => {
+        el.textContent = `Administrador · ${email}`;
+      });
+      document.querySelectorAll('[data-user-avatar]').forEach(el => {
+        el.src = '../assets/logo-icon.png';
+        el.style.objectFit = 'contain';
+        el.style.background = '#0a1628';
+        el.style.padding = '3px';
+      });
+
+      // Atualiza subtítulo do Dashboard quando logado como Admin
+      if (location.pathname.endsWith('dashboard.html')) {
+        const topSub = document.querySelector('.admin-topbar__title p');
+        if (topSub) {
+          topSub.innerHTML = `Conectado como <strong>Administrador Geral (Alive)</strong> · Conta: <code>${email}</code> · Visão global da imobiliária.`;
+        }
       }
+      return;
+    }
+
+    // Login de Corretor (Paulo Souza)
+    const nome = (brokerPerfil && brokerPerfil.nome) || 'Paulo Souza';
+    const creci = (brokerPerfil && brokerPerfil.creci && brokerPerfil.creci !== 'ADMIN') ? brokerPerfil.creci : 'F-18971';
+    const foto = (brokerPerfil && brokerPerfil.foto_url) || '../assets/logo.jpeg';
+
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      el.textContent = nome;
     });
+    document.querySelectorAll('[data-user-role]').forEach(el => {
+      el.textContent = `Corretor · CRECI ${creci}`;
+    });
+    document.querySelectorAll('[data-user-avatar]').forEach(el => {
+      el.onerror = () => { el.onerror = null; el.src = '../assets/logo.jpeg'; };
+      el.src = foto;
+    });
+
+    if (location.pathname.endsWith('dashboard.html')) {
+      const topSub = document.querySelector('.admin-topbar__title p');
+      if (topSub) {
+        topSub.innerHTML = `Bem-vindo de volta, <strong>${nome}</strong> · Conta conectada: <code>${email}</code>`;
+      }
+    }
   }
 
   document.addEventListener('click', (e) => {
