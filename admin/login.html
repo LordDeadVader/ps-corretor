@@ -9,9 +9,79 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/tokens.css?v=20261020c">
-<link rel="stylesheet" href="../css/admin.css?v=20261020c">
-<script src="../js/theme.js?v=20261020c"></script>
+<link rel="stylesheet" href="../css/tokens.css?v=20261020d">
+<link rel="stylesheet" href="../css/admin.css?v=20261020d">
+<script src="../js/theme.js?v=20261020d"></script>
+<style>
+  .auth-lock-box {
+    margin-top: 16px;
+    padding: 20px 18px;
+    border-radius: 12px;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    text-align: center;
+  }
+  .auth-lock-box__icon {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: rgba(220, 38, 38, 0.15);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-lock-box__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .auth-lock-box__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-heading, #0f172a);
+    margin: 0 0 6px;
+  }
+  .auth-lock-box__desc {
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary, #475569);
+    margin: 0 0 16px;
+  }
+  .auth-lock-box__whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #16a34a;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
+  }
+  .auth-lock-box__whatsapp:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+  }
+  .auth-lock-box__whatsapp svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .auth-attempts-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--color-text-tertiary, #64748b);
+    margin-top: -4px;
+  }
+</style>
 </head>
 <body class="admin-body">
 
@@ -21,7 +91,7 @@
       <img src="../assets/logo-icon.png" alt="Paulo Souza Corretor de Imóveis" class="brand__mark">
     </a>
     <h1>Área do Corretor</h1>
-    <p class="auth-card__subtitle">Entre com seu e-mail e senha para acessar o painel.</p>
+    <p class="auth-card__subtitle" id="loginSubtitle">Entre com seu e-mail e senha para acessar o painel.</p>
 
     <form id="loginForm" class="auth-form" novalidate>
       <div class="field">
@@ -33,52 +103,232 @@
         <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
       </div>
 
+      <div class="auth-attempts-badge" id="attemptsInfo" hidden>
+        <span>Segurança do painel</span>
+        <strong id="attemptsCounter">5 de 5 tentativas restantes</strong>
+      </div>
+
       <p class="auth-form__error" id="loginError" role="alert" hidden></p>
 
       <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginSubmit">Entrar</button>
     </form>
+
+    <div id="supportLockBox" class="auth-lock-box" hidden>
+      <div class="auth-lock-box__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2 class="auth-lock-box__title">Acesso bloqueado por segurança</h2>
+      <p class="auth-lock-box__desc">
+        Você atingiu o limite máximo de <strong>5 tentativas de login</strong> malsucedidas.<br>
+        Para proteger o painel e liberar seu acesso novamente, fale diretamente com o suporte técnico.
+      </p>
+      <a
+        id="supportWhatsappBtn"
+        href="https://wa.me/5542999318784?text=Ol%C3%A1%20Davi!%20O%20acesso%20ao%20painel%20do%20site%20PS%20Corretor%20de%20Im%C3%B3veis%20foi%20bloqueado%20ap%C3%B3s%205%20tentativas%20de%20login.%20Pode%20me%20ajudar%20com%20o%20suporte%3F"
+        target="_blank"
+        rel="noopener"
+        class="auth-lock-box__whatsapp"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        Falar com o Suporte no WhatsApp
+      </a>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase-config.js?v=20261020c"></script>
+<script src="../js/supabase-config.js?v=20261020d"></script>
 <script>
-  (async function redirectIfLogged() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) window.location.replace('dashboard.html');
-  })();
+  const MAX_LOGIN_ATTEMPTS = 5;
+  const LOCK_DURATION_MS = 30 * 60 * 1000; // 30 minutos
+  const STORAGE_KEY_ATTEMPTS = 'ps_auth_failed_attempts';
+  const STORAGE_KEY_LOCK_UNTIL = 'ps_auth_lock_until';
 
   const form = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
   const errorEl = document.getElementById('loginError');
   const submitBtn = document.getElementById('loginSubmit');
+  const supportLockBox = document.getElementById('supportLockBox');
+  const attemptsInfo = document.getElementById('attemptsInfo');
+  const attemptsCounter = document.getElementById('attemptsCounter');
+  const supportWhatsappBtn = document.getElementById('supportWhatsappBtn');
+
+  function getLocalAttemptState() {
+    try {
+      const lockUntil = parseInt(localStorage.getItem(STORAGE_KEY_LOCK_UNTIL) || '0', 10);
+      let attempts = parseInt(localStorage.getItem(STORAGE_KEY_ATTEMPTS) || '0', 10);
+      if (isNaN(attempts) || attempts < 0) attempts = 0;
+
+      if (lockUntil && Date.now() >= lockUntil) {
+        localStorage.removeItem(STORAGE_KEY_LOCK_UNTIL);
+        localStorage.removeItem(STORAGE_KEY_ATTEMPTS);
+        return { attempts: 0, locked: false };
+      }
+      const locked = attempts >= MAX_LOGIN_ATTEMPTS || (lockUntil > Date.now());
+      return { attempts, locked };
+    } catch (_) {
+      return { attempts: 0, locked: false };
+    }
+  }
+
+  function setLocalAttemptState(attempts) {
+    try {
+      if (attempts <= 0) {
+        localStorage.removeItem(STORAGE_KEY_ATTEMPTS);
+        localStorage.removeItem(STORAGE_KEY_LOCK_UNTIL);
+        return;
+      }
+      localStorage.setItem(STORAGE_KEY_ATTEMPTS, String(attempts));
+      if (attempts >= MAX_LOGIN_ATTEMPTS) {
+        localStorage.setItem(STORAGE_KEY_LOCK_UNTIL, String(Date.now() + LOCK_DURATION_MS));
+      }
+    } catch (_) {}
+  }
+
+  function showLockedUI(emailTried) {
+    form.hidden = true;
+    emailInput.disabled = true;
+    passwordInput.disabled = true;
+    submitBtn.disabled = true;
+    supportLockBox.hidden = false;
+
+    const msg = `Olá Davi! Tentei acessar a Área do Corretor no site PS Corretor de Imóveis${emailTried ? ' (' + emailTried + ')' : ''} e o login foi bloqueado após 5 tentativas. Pode me ajudar no suporte?`;
+    supportWhatsappBtn.href = `https://wa.me/5542999318784?text=${encodeURIComponent(msg)}`;
+  }
+
+  function updateAttemptsUI(attempts) {
+    if (attempts >= MAX_LOGIN_ATTEMPTS) {
+      showLockedUI(emailInput.value.trim());
+      return;
+    }
+    if (attempts > 0) {
+      const remaining = Math.max(0, MAX_LOGIN_ATTEMPTS - attempts);
+      attemptsInfo.hidden = false;
+      attemptsCounter.textContent = `${remaining} de ${MAX_LOGIN_ATTEMPTS} tentativa(s) restante(s)`;
+      attemptsCounter.style.color = remaining <= 2 ? '#ef4444' : '';
+    } else {
+      attemptsInfo.hidden = true;
+    }
+  }
+
+  (async function initLoginSecurity() {
+    // Permite desbloqueio rápido pelo suporte via link ?desbloquear=alive
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('desbloquear') === 'alive' || params.get('unlock') === 'alive') {
+      setLocalAttemptState(0);
+      try { await supabaseClient.rpc('registrar_tentativa_login', { p_chave: 'painel_global', p_sucesso: true }); } catch (_) {}
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      window.location.replace('dashboard.html');
+      return;
+    }
+
+    const localState = getLocalAttemptState();
+    if (localState.locked) {
+      showLockedUI('');
+      return;
+    }
+    updateAttemptsUI(localState.attempts);
+
+    // Verifica também o contador global no banco (protege contra guia anônima)
+    try {
+      const { data: srv } = await supabaseClient.rpc('verificar_bloqueio_login', { p_chave: 'painel_global' });
+      if (srv && srv.bloqueado) {
+        setLocalAttemptState(MAX_LOGIN_ATTEMPTS);
+        showLockedUI('');
+      } else if (srv && typeof srv.tentativas === 'number' && srv.tentativas > localState.attempts) {
+        setLocalAttemptState(srv.tentativas);
+        updateAttemptsUI(srv.tentativas);
+      }
+    } catch (_) {}
+  })();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorEl.hidden = true;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Entrando...';
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+    const current = getLocalAttemptState();
+    if (current.locked) {
+      showLockedUI(emailInput.value.trim());
+      return;
+    }
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+      errorEl.textContent = 'Preencha seu e-mail e sua senha para continuar.';
+      errorEl.hidden = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Verificando...';
+
+    // Verifica bloqueio no servidor antes de tentar autenticar
+    try {
+      const { data: srvCheck } = await supabaseClient.rpc('verificar_bloqueio_login', { p_chave: 'painel_global' });
+      if (srvCheck && srvCheck.bloqueado) {
+        setLocalAttemptState(MAX_LOGIN_ATTEMPTS);
+        showLockedUI(email);
+        return;
+      }
+    } catch (_) {}
 
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     if (error) {
-      // 400 = credencial inválida. Qualquer outra coisa (402, 5xx, falha de rede)
-      // é problema do serviço — não faz sentido dizer que a senha está errada.
       const credencialInvalida = error.code === 'invalid_credentials' || error.status === 400;
-      errorEl.textContent = credencialInvalida
-        ? 'E-mail ou senha inválidos. Verifique e tente novamente.'
-        : 'Serviço temporariamente indisponível. Sua senha não foi alterada — tente novamente em alguns minutos.';
+
+      if (!credencialInvalida) {
+        errorEl.textContent = 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
+        errorEl.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Entrar';
+        return;
+      }
+
+      let newAttempts = current.attempts + 1;
+      try {
+        const { data: reg } = await supabaseClient.rpc('registrar_tentativa_login', { p_chave: 'painel_global', p_sucesso: false });
+        if (reg && typeof reg.tentativas === 'number') {
+          newAttempts = Math.max(newAttempts, reg.tentativas);
+        }
+      } catch (_) {}
+
+      setLocalAttemptState(newAttempts);
+      updateAttemptsUI(newAttempts);
+
+      if (newAttempts >= MAX_LOGIN_ATTEMPTS) {
+        showLockedUI(email);
+        return;
+      }
+
+      const restantes = Math.max(0, MAX_LOGIN_ATTEMPTS - newAttempts);
+      errorEl.textContent = `E-mail ou senha inválidos. Atenção: você tem mais ${restantes} tentativa(s) antes do bloqueio de segurança.`;
       errorEl.hidden = false;
       submitBtn.disabled = false;
       submitBtn.textContent = 'Entrar';
       return;
     }
 
-    window.location.href = 'dashboard.html';
+    // Sucesso: zera as tentativas no navegador e no banco
+    setLocalAttemptState(0);
+    try {
+      await supabaseClient.rpc('registrar_tentativa_login', { p_chave: 'painel_global', p_sucesso: true });
+    } catch (_) {}
+
+    window.location.replace('dashboard.html');
   });
 </script>
 </body>
 </html>
-

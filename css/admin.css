@@ -5,6 +5,13 @@
 body.admin-body { background: var(--color-bg); }
 
 /* ---------------------------- SHELL ---------------------------- */
+html:not(.is-authenticated) .admin-shell,
+html:not(.is-authenticated) .receipt-paper,
+html:not(.is-authenticated) .receipt-toolbar {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .admin-shell { display: flex; min-height: 100vh; }
 
 /* ---- Sidebar ---- */

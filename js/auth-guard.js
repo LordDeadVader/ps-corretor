@@ -1,7 +1,29 @@
 // PS Corretor de Imóveis — Proteção de rotas do painel
 // Inclua depois de supabase-config.js em toda página do /admin que exigir login.
 (function () {
-  const isLoginPage = location.pathname.endsWith('/login.html');
+  const isLoginPage = location.pathname.endsWith('/login.html') || location.pathname.endsWith('/login');
+
+  // Verificação síncrona imediata antes de qualquer renderização
+  if (!isLoginPage) {
+    let hasLocalToken = false;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+          const val = localStorage.getItem(k);
+          if (val && val.includes('access_token')) {
+            hasLocalToken = true;
+            break;
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (!hasLocalToken) {
+      window.location.replace('login.html');
+      return;
+    }
+  }
 
   async function guard() {
     const { data: { session } } = await supabaseClient.auth.getSession();

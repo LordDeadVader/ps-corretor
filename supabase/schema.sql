@@ -302,3 +302,99 @@ as $$
 $$;
 
 grant execute on function public.get_storage_usage() to authenticated;
+
+-- ---------------------------------------------------------------------
+-- Controle de tentativas de login (máximo 5 tentativas antes de bloqueio)
+-- ---------------------------------------------------------------------
+create table if not exists public.login_tentativas (
+  chave text primary key,
+  tentativas int not null default 0,
+  bloqueado_ate timestamptz,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.login_tentativas enable row level security;
+
+create or replace function public.verificar_bloqueio_login(p_chave text default 'painel_global')
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_reg public.login_tentativas%rowtype;
+begin
+  select * into v_reg from public.login_tentativas where chave = coalesce(nullif(trim(lower(p_chave)), ''), 'painel_global');
+  if not found then
+    return jsonb_build_object('bloqueado', false, 'tentativas', 0, 'restantes', 5);
+  end if;
+
+  if v_reg.bloqueado_ate is not null and v_reg.bloqueado_ate > now() then
+    return jsonb_build_object(
+      'bloqueado', true,
+      'tentativas', v_reg.tentativas,
+      'restantes', 0,
+      'bloqueado_ate', v_reg.bloqueado_ate
+    );
+  end if;
+
+  if (v_reg.bloqueado_ate is not null and v_reg.bloqueado_ate <= now())
+     or (v_reg.updated_at < now() - interval '30 minutes') then
+    update public.login_tentativas
+       set tentativas = 0, bloqueado_ate = null, updated_at = now()
+     where chave = v_reg.chave;
+    return jsonb_build_object('bloqueado', false, 'tentativas', 0, 'restantes', 5);
+  end if;
+
+  return jsonb_build_object(
+    'bloqueado', v_reg.tentativas >= 5,
+    'tentativas', v_reg.tentativas,
+    'restantes', greatest(0, 5 - v_reg.tentativas),
+    'bloqueado_ate', v_reg.bloqueado_ate
+  );
+end;
+$$;
+
+create or replace function public.registrar_tentativa_login(p_chave text default 'painel_global', p_sucesso boolean default false)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_key text := coalesce(nullif(trim(lower(p_chave)), ''), 'painel_global');
+  v_tentativas int;
+  v_bloqueado_ate timestamptz := null;
+begin
+  if p_sucesso then
+    delete from public.login_tentativas where chave in (v_key, 'painel_global');
+    return jsonb_build_object('bloqueado', false, 'tentativas', 0, 'restantes', 5);
+  end if;
+
+  insert into public.login_tentativas (chave, tentativas, bloqueado_ate, updated_at)
+  values (v_key, 1, null, now())
+  on conflict (chave) do update
+    set tentativas = case
+          when public.login_tentativas.updated_at < now() - interval '30 minutes' then 1
+          else public.login_tentativas.tentativas + 1
+        end,
+        bloqueado_ate = case
+          when (case when public.login_tentativas.updated_at < now() - interval '30 minutes' then 1 else public.login_tentativas.tentativas + 1 end) >= 5
+          then now() + interval '30 minutes'
+          else public.login_tentativas.bloqueado_ate
+        end,
+        updated_at = now()
+  returning tentativas, bloqueado_ate into v_tentativas, v_bloqueado_ate;
+
+  return jsonb_build_object(
+    'bloqueado', v_tentativas >= 5,
+    'tentativas', v_tentativas,
+    'restantes', greatest(0, 5 - v_tentativas),
+    'bloqueado_ate', v_bloqueado_ate
+  );
+end;
+$$;
+
+grant execute on function public.verificar_bloqueio_login(text) to anon, authenticated;
+grant execute on function public.registrar_tentativa_login(text, boolean) to anon, authenticated;
+
