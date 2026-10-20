@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/tokens.css?v=20261020d">
-<link rel="stylesheet" href="../css/admin.css?v=20261020d">
-<script src="../js/theme.js?v=20261020d"></script>
+<link rel="stylesheet" href="../css/tokens.css?v=20261020e">
+<link rel="stylesheet" href="../css/admin.css?v=20261020e">
+<script src="../js/theme.js?v=20261020e"></script>
 </head>
 <body class="admin-body">
 <div class="admin-shell">
@@ -134,15 +134,41 @@
           <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">Salvar Alterações</button>
         </div>
       </form>
+
+      <section class="form-block" id="aliveMaintenanceSettingsBlock" style="margin-top: var(--space-6);">
+        <div class="form-block__header">
+          <span class="form-block__number">3</span>
+          <div style="flex:1;">
+            <h3>Manutenção, Servidor &amp; Suporte — Alive</h3>
+            <p>Assinatura mensal de hospedagem, banco de dados e suporte técnico · Vencimento todo dia 10 (R$ 65,00/mês)</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" data-open-alive-pix>Pagar com PIX</button>
+        </div>
+        <div class="form-block__body">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:var(--space-4);padding:12px 14px;border-radius:var(--radius-md);background:var(--color-bg);border:1px solid var(--color-border);">
+            <div style="font-size:var(--fs-xs);color:var(--color-text-secondary);">
+              <strong style="color:var(--color-heading);display:block;font-size:var(--fs-sm);">Beneficiário: Davi Henrique (Alive Agency)</strong>
+              <span>Chave PIX Celular: <code>+5542999318784</code> · Valor mensal: <strong>R$ 65,00</strong> · Vencimento: <strong>Dia 10</strong></span>
+            </div>
+            <a href="https://wa.me/5542999318784" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Suporte WhatsApp</a>
+          </div>
+          <h4 style="font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-tertiary);margin:0 0 10px;">Histórico de Manutenção</h4>
+          <ul class="alive-history-list" id="aliveMaintenanceHistoryList">
+            <li><span><strong>Outubro/2026</strong> — R$ 65,00</span><span class="alive-history-status">Concluído</span></li>
+            <li><span><strong>Setembro/2026</strong> — R$ 65,00</span><span class="alive-history-status">Concluído</span></li>
+            <li><span><strong>Implementação do Site</strong> — R$ 320,00</span><span class="alive-history-status">Pago</span></li>
+          </ul>
+        </div>
+      </section>
     </div>
   </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/supabase-config.js?v=20261020d"></script>
-<script src="../js/auth-guard.js?v=20261020d"></script>
-<script src="../js/admin.js?v=20261020d"></script>
-<script src="../js/image-utils.js?v=20261020d"></script>
-<script src="../js/settings.js?v=20261020d"></script>
+<script src="../js/supabase-config.js?v=20261020e"></script>
+<script src="../js/auth-guard.js?v=20261020e"></script>
+<script src="../js/admin.js?v=20261020e"></script>
+<script src="../js/image-utils.js?v=20261020e"></script>
+<script src="../js/settings.js?v=20261020e"></script>
 </body>
 </html>
 
