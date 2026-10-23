@@ -120,12 +120,30 @@
     }
   }
 
+  // Expiração automática por inatividade (60 minutos sem interação revoga a sessão)
+  const INACTIVITY_LIMIT_MS = 60 * 60 * 1000;
+  let inactivityTimer = null;
+  function resetInactivityTimer() {
+    if (isLoginPage) return;
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(async () => {
+      try { await supabaseClient.auth.signOut({ scope: 'global' }); } catch (_) {}
+      window.location.replace('login.html');
+    }, INACTIVITY_LIMIT_MS);
+  }
+  if (!isLoginPage) {
+    ['click', 'keydown', 'mousemove', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+    resetInactivityTimer();
+  }
+
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-logout]');
     if (!btn) return;
     e.preventDefault();
-    supabaseClient.auth.signOut().then(() => {
-      window.location.href = 'login.html';
+    supabaseClient.auth.signOut({ scope: 'global' }).then(() => {
+      window.location.replace('login.html');
     });
   });
 

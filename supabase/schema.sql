@@ -471,3 +471,43 @@ drop trigger if exists trg_guard_solicitacoes_titulares on public.solicitacoes_t
 create trigger trg_guard_solicitacoes_titulares
 before insert on public.solicitacoes_titulares
 for each row execute function public.guard_solicitacoes_titulares();
+
+-- 11.5 Validação Zero-Trust no Servidor (Whitelist de JWT e Anti-XSS em Payloads)
+create or replace function public.is_painel_autorizado()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select auth.role() = 'authenticated'
+     and lower(coalesce(auth.jwt() ->> 'email', '')) in (
+       'paulosouzalocacao@gmail.com',
+       'davihenriqueded@gmail.com'
+     );
+$$;
+
+create or replace function public.prevent_xss_payload()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_json text := row_to_json(NEW)::text;
+begin
+  if v_json ~* '<script|<iframe|<object|<embed|javascript:|onerror\s*=|onload\s*=' then
+    raise exception 'Payload rejeitado pelo servidor: código executável ou HTML proibido detectado.';
+  end if;
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_prevent_xss_imoveis on public.imoveis;
+create trigger trg_prevent_xss_imoveis before insert or update on public.imoveis for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_bairros on public.bairros_destaque;
+create trigger trg_prevent_xss_bairros before insert or update on public.bairros_destaque for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_perfil on public.corretor_perfil;
+create trigger trg_prevent_xss_perfil before insert or update on public.corretor_perfil for each row execute function public.prevent_xss_payload();
+
