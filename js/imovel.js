@@ -6,6 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return (str == null ? '' : String(str)).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  function sanitizeUrl(url, fallback = 'assets/logo.jpeg') {
+    const s = String(url || '').trim();
+    if (/^(https?:\/\/|\/|\.\.?\/|assets\/|data:image\/)/i.test(s)) return s;
+    return fallback;
+  }
+
+  function formatSafeRichText(str) {
+    const escaped = escapeHtml(str || '');
+    return escaped
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\r?\n/g, '<br>');
+  }
+
   const iconBed = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 18h18M5 10V6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v4"/></svg>';
   const iconBath = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-3Z"/><path d="M7 12V6a2 2 0 0 1 3.6-1.2"/><path d="M4 12V9a1 1 0 0 1 1-1"/></svg>';
   const iconGarage = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 2-6h14l2 6"/><path d="M3 10h18v9H3z"/><circle cx="7.5" cy="15" r="1"/><circle cx="16.5" cy="15" r="1"/></svg>';
@@ -115,14 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <div class="imovel-gallery">
         <div class="imovel-gallery__main${/-wm\.(webp|jpg|jpeg|png)(\?|$)/i.test(fotos[0] || '') ? ' has-burned-wm' : ''}">
-          <img id="galleryMain" src="${escapeHtml(fotos[0])}" alt="${escapeHtml(p.titulo)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
+          <img id="galleryMain" src="${escapeHtml(sanitizeUrl(fotos[0]))}" alt="${escapeHtml(p.titulo)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
           ${fotos.length > 1 ? `
           <button class="imovel-gallery__arrow imovel-gallery__arrow--prev" id="galleryPrev" aria-label="Foto anterior">${iconChevron('L')}</button>
           <button class="imovel-gallery__arrow imovel-gallery__arrow--next" id="galleryNext" aria-label="Próxima foto">${iconChevron('R')}</button>
           <span class="imovel-gallery__count" id="galleryCount">1 / ${fotos.length}</span>` : ''}
         </div>
         ${fotos.length > 1 ? `<div class="imovel-gallery__thumbs" id="galleryThumbs">
-          ${fotos.map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}"${i === 0 ? '' : ' loading="lazy" decoding="async"'} onerror="this.onerror=null;this.src='assets/logo.jpeg';">`).join('')}
+          ${fotos.map((src, i) => `<img src="${escapeHtml(sanitizeUrl(src))}" data-index="${i}" class="${i === 0 ? 'is-active' : ''}" alt="Foto ${i + 1}"${i === 0 ? '' : ' loading="lazy" decoding="async"'} onerror="this.onerror=null;this.src='assets/logo.jpeg';">`).join('')}
         </div>` : ''}
       </div>
 
@@ -142,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div class="imovel-section">
             <h2>Sobre o imóvel</h2>
-            <p class="imovel-desc">${escapeHtml(p.descricao || '')}</p>
+            <p class="imovel-desc">${formatSafeRichText(p.descricao || '')}</p>
           </div>
 
           ${destaques ? `<div class="imovel-section">
@@ -159,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="imovel-price-card__note">Resposta rápida em horário comercial</p>
           </div>
           <div class="imovel-agent-card">
-            <img src="${escapeHtml(corretorFoto)}" alt="${escapeHtml(corretorNome)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
+            <img src="${escapeHtml(sanitizeUrl(corretorFoto))}" alt="${escapeHtml(corretorNome)}" onerror="this.onerror=null;this.src='assets/logo.jpeg';">
             <div><strong>${escapeHtml(corretorNome)}</strong><span>${corretorCreci}</span></div>
           </div>
         </aside>

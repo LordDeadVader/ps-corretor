@@ -99,7 +99,8 @@
     // Login de Corretor (Paulo Souza)
     const nome = (brokerPerfil && brokerPerfil.nome) || 'Paulo Souza';
     const creci = (brokerPerfil && brokerPerfil.creci && brokerPerfil.creci !== 'ADMIN') ? brokerPerfil.creci : 'F-18971';
-    const foto = (brokerPerfil && brokerPerfil.foto_url) || '../assets/logo.jpeg';
+    const rawFoto = (brokerPerfil && brokerPerfil.foto_url) || '../assets/logo.jpeg';
+    const foto = /^(https?:\/\/|\/|\.\.?\/|assets\/|data:image\/)/i.test(String(rawFoto).trim()) ? rawFoto : '../assets/logo.jpeg';
 
     document.querySelectorAll('[data-user-name]').forEach(el => {
       el.textContent = nome;
@@ -115,7 +116,13 @@
     if (location.pathname.endsWith('dashboard.html')) {
       const topSub = document.querySelector('.admin-topbar__title p');
       if (topSub) {
-        topSub.innerHTML = `Bem-vindo de volta, <strong>${nome}</strong> · Conta conectada: <code>${email}</code>`;
+        topSub.textContent = 'Bem-vindo de volta, ';
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = nome;
+        const midText = document.createTextNode(' · Conta conectada: ');
+        const codeEl = document.createElement('code');
+        codeEl.textContent = email;
+        topSub.append(strongEl, midText, codeEl);
       }
     }
   }
