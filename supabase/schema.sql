@@ -427,12 +427,20 @@ create trigger trg_prevent_id_tampering_imoveis
 before update on public.imoveis
 for each row execute function public.prevent_id_tampering();
 
--- 11.3 Validação de integridade de preços (bloqueia valores negativos ou absurdos)
-alter table public.imoveis drop constraint if exists chk_imoveis_preco_valido;
-alter table public.imoveis add constraint chk_imoveis_preco_valido
-  check (preco >= 0 and preco <= 999999999);
+-- 11.3 Validação de integridade de entrada e preços (bloqueia valores negativos ou absurdos)
+alter table public.imoveis drop constraint if exists chk_imoveis_entrada_valida;
+alter table public.imoveis add constraint chk_imoveis_entrada_valida
+  check (
+    (preco_valor is null or (preco_valor >= 0 and preco_valor <= 999999999))
+    and quartos >= 0 and quartos <= 50
+    and suites >= 0 and suites <= 50
+    and banheiros >= 0 and banheiros <= 50
+    and vagas >= 0 and vagas <= 50
+    and length(titulo) between 3 and 200
+    and length(coalesce(descricao, '')) <= 10000
+  );
 
--- 11.4 Blindagem da tabela pública LGPD (Rate-limit, tamanho máximo e bloqueio de HTML/JS)
+-- 11.4 Blindagem das tabelas públicas LGPD (Rate-limit, validação de formato, tamanho máximo e bloqueio de HTML/JS)
 create or replace function public.guard_solicitacoes_titulares()
 returns trigger
 language plpgsql
@@ -450,19 +458,25 @@ begin
     raise exception 'Muitas solicitações recentes. Aguarde alguns minutos antes de tentar novamente.';
   end if;
 
-  if length(coalesce(NEW.nome, '')) > 120
-     or length(coalesce(NEW.contato, '')) > 120
-     or length(coalesce(NEW.detalhes, '')) > 1000 then
-    raise exception 'Dados excedem o limite máximo de caracteres permitido.';
+  if length(trim(coalesce(NEW.nome, ''))) < 2 or length(coalesce(NEW.nome, '')) > 120 then
+    raise exception 'Nome inválido (deve ter entre 2 e 120 caracteres).';
   end if;
 
-  if coalesce(NEW.nome, '') ~* '<[a-z!/]|javascript:|onerror=|onload='
-     or coalesce(NEW.contato, '') ~* '<[a-z!/]|javascript:|onerror=|onload='
-     or coalesce(NEW.detalhes, '') ~* '<script|<iframe|javascript:|onerror=|onload=' then
-    raise exception 'Conteúdo inválido detectado.';
+  if length(coalesce(NEW.email, '')) > 150 or coalesce(NEW.email, '') !~* '^[^@\s]+@[^@\s]+\.[^@\s]+$' then
+    raise exception 'E-mail em formato inválido.';
+  end if;
+
+  if length(coalesce(NEW.telefone, '')) > 40 or length(coalesce(NEW.cpf_cnpj, '')) > 30 then
+    raise exception 'Telefone ou CPF/CNPJ excede o tamanho máximo.';
+  end if;
+
+  if length(trim(coalesce(NEW.mensagem, ''))) < 5 or length(coalesce(NEW.mensagem, '')) > 2000 then
+    raise exception 'A mensagem deve ter entre 5 e 2000 caracteres.';
   end if;
 
   NEW.status := 'recebida';
+  NEW.observacoes_internas := null;
+  NEW.respondido_em := null;
   return NEW;
 end;
 $$;
@@ -471,6 +485,39 @@ drop trigger if exists trg_guard_solicitacoes_titulares on public.solicitacoes_t
 create trigger trg_guard_solicitacoes_titulares
 before insert on public.solicitacoes_titulares
 for each row execute function public.guard_solicitacoes_titulares();
+
+create or replace function public.guard_consentimentos()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_recent_count int;
+begin
+  select count(*) into v_recent_count
+    from public.consentimentos
+   where created_at > now() - interval '5 minutes';
+
+  if v_recent_count >= 30 then
+    raise exception 'Limite de requisições excedido.';
+  end if;
+
+  if length(coalesce(NEW.categorias::text, '')) > 500
+     or length(coalesce(NEW.versao_politica, '')) > 40
+     or length(coalesce(NEW.origem, '')) > 200
+     or length(coalesce(NEW.user_agent, '')) > 400 then
+    raise exception 'Payload de consentimento excede os limites permitidos.';
+  end if;
+
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_guard_consentimentos on public.consentimentos;
+create trigger trg_guard_consentimentos
+before insert on public.consentimentos
+for each row execute function public.guard_consentimentos();
 
 -- 11.5 Validação Zero-Trust no Servidor (Whitelist de JWT e Anti-XSS em Payloads)
 create or replace function public.is_painel_autorizado()
@@ -510,4 +557,22 @@ create trigger trg_prevent_xss_bairros before insert or update on public.bairros
 
 drop trigger if exists trg_prevent_xss_perfil on public.corretor_perfil;
 create trigger trg_prevent_xss_perfil before insert or update on public.corretor_perfil for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_proprietarios on public.proprietarios;
+create trigger trg_prevent_xss_proprietarios before insert or update on public.proprietarios for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_inquilinos on public.inquilinos;
+create trigger trg_prevent_xss_inquilinos before insert or update on public.inquilinos for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_contratos on public.contratos_locacao;
+create trigger trg_prevent_xss_contratos before insert or update on public.contratos_locacao for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_recibos on public.recibos;
+create trigger trg_prevent_xss_recibos before insert or update on public.recibos for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_solicitacoes on public.solicitacoes_titulares;
+create trigger trg_prevent_xss_solicitacoes before insert or update on public.solicitacoes_titulares for each row execute function public.prevent_xss_payload();
+
+drop trigger if exists trg_prevent_xss_consentimentos on public.consentimentos;
+create trigger trg_prevent_xss_consentimentos before insert or update on public.consentimentos for each row execute function public.prevent_xss_payload();
 
