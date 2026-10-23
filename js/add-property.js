@@ -159,6 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (window.PS_AUTH_CONFIG && !window.PS_AUTH_CONFIG.hasResourceAccess(p.corretor_id, session)) {
+      window.PS_AUTH_CONFIG.render403(null, '403 Forbidden: Você não tem permissão para editar este imóvel.');
+      return;
+    }
+
     document.getElementById('imovelId').value = p.id;
     document.getElementById('titulo').value = p.titulo;
     document.getElementById('tipoImovel').value = p.tipo;

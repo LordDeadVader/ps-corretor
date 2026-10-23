@@ -10,6 +10,37 @@
     PRIMARY_BROKER_ID,
     isAdminEmail(email) {
       return ADMIN_EMAILS.includes(String(email || '').trim().toLowerCase());
+    },
+    hasResourceAccess(resourceOwnerId, session) {
+      if (!session || !session.user) return false;
+      const email = String(session.user.email || '').trim().toLowerCase();
+      const uid = session.user.id;
+      if (this.isAdminEmail(email)) return true;
+      if (email === 'paulosouzalocacao@gmail.com' && (resourceOwnerId === uid || resourceOwnerId === PRIMARY_BROKER_ID)) {
+        return true;
+      }
+      return Boolean(resourceOwnerId && uid && resourceOwnerId === uid);
+    },
+    render403(targetEl, message) {
+      const container = targetEl || document.querySelector('.admin-content') || document.body;
+      container.textContent = '';
+      const box = document.createElement('div');
+      box.style.cssText = 'max-width:520px;margin:48px auto;padding:32px;border-radius:16px;background:var(--color-bg-secondary,#111d35);border:1px solid rgba(239,68,68,0.35);text-align:center;';
+      const badge = document.createElement('div');
+      badge.style.cssText = 'display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(239,68,68,0.15);color:#f87171;font-weight:700;font-size:12px;margin-bottom:12px;';
+      badge.textContent = 'ERRO 403 · ACESSO NEGADO';
+      const title = document.createElement('h2');
+      title.style.cssText = 'margin:0 0 8px;font-size:20px;';
+      title.textContent = 'Você não tem permissão para acessar este recurso';
+      const desc = document.createElement('p');
+      desc.style.cssText = 'margin:0 0 20px;color:var(--color-text-secondary,#94a3b8);font-size:14px;';
+      desc.textContent = message || 'Este registro pertence a outro usuário ou exige privilégios superiores.';
+      const backBtn = document.createElement('a');
+      backBtn.href = 'dashboard.html';
+      backBtn.className = 'btn btn-primary';
+      backBtn.textContent = 'Voltar ao Painel';
+      box.append(badge, title, desc, backBtn);
+      container.appendChild(box);
     }
   };
 

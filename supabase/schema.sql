@@ -576,3 +576,70 @@ create trigger trg_prevent_xss_solicitacoes before insert or update on public.so
 drop trigger if exists trg_prevent_xss_consentimentos on public.consentimentos;
 create trigger trg_prevent_xss_consentimentos before insert or update on public.consentimentos for each row execute function public.prevent_xss_payload();
 
+-- 11.6 Autorização por Recurso (Object-Level Authorization: SIM -> retorna | NÃO -> 403 Forbidden)
+create or replace function public.tem_acesso_recurso(p_corretor_id uuid)
+returns boolean
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_email text := lower(coalesce(auth.jwt() ->> 'email', ''));
+  v_uid uuid := auth.uid();
+begin
+  if auth.role() <> 'authenticated' or v_uid is null then
+    return false;
+  end if;
+
+  if v_email = 'davihenriqueded@gmail.com' then
+    return true;
+  end if;
+
+  if v_email = 'paulosouzalocacao@gmail.com'
+     and p_corretor_id in (v_uid, 'e08931fd-1c79-4d86-9e19-b4b22c1174d4'::uuid) then
+    return true;
+  end if;
+
+  if p_corretor_id is not null and p_corretor_id = v_uid and public.is_painel_autorizado() then
+    return true;
+  end if;
+
+  return false;
+end;
+$$;
+
+create or replace function public.enforce_resource_access_403()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_target_owner uuid;
+begin
+  if TG_OP = 'DELETE' then
+    v_target_owner := OLD.corretor_id;
+  else
+    v_target_owner := NEW.corretor_id;
+  end if;
+
+  if not public.tem_acesso_recurso(v_target_owner) then
+    raise exception '403 Forbidden: Acesso negado a este recurso.'
+      using errcode = '42501';
+  end if;
+
+  if TG_OP = 'UPDATE' and OLD.corretor_id is distinct from NEW.corretor_id then
+    if not public.tem_acesso_recurso(OLD.corretor_id) then
+      raise exception '403 Forbidden: Você não pode transferir a propriedade deste recurso.'
+        using errcode = '42501';
+    end if;
+  end if;
+
+  if TG_OP = 'DELETE' then
+    return OLD;
+  end if;
+  return NEW;
+end;
+$$;
+
+
